@@ -131,6 +131,7 @@ public class VideoPanelForMOCK extends javax.swing.JPanel implements IDroneVideo
       
         if(im != null)
         {
+
         	IplImage iplImg = IplImage.createFrom(im);
         	Vector<MyLine> detectedLines = featureDetection.detectLines(iplImg);
         	Vector<MyCircle> detectedCircles = featureDetection.detectCircles(iplImg);

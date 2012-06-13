@@ -17,13 +17,19 @@ import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 public class FeatureDetection {
 
+	private int imgHeight = 144; //240
+	private int imgWidth = 176; //320 176
+	
 	public FeatureDetection ()
 	{
-		
+
 	}// FeatureDetection
 	
 	
-	
+	public void initWidthAndHeight(int imgWidth, int imgHeight){
+		this.imgWidth=imgHeight;
+		this.imgHeight = imgWidth;
+	}
 	
 	
 	
@@ -39,7 +45,7 @@ public class FeatureDetection {
 		
 		Vector<MyCircle> detectedCircles = new Vector<MyCircle>();
 		
-		IplImage grayImgCircles = IplImage.create(320, 240, IPL_DEPTH_8U, 1);
+		IplImage grayImgCircles = IplImage.create(this.imgWidth, this.imgHeight, IPL_DEPTH_8U, 1);
 
 		cvCvtColor(im, grayImgCircles, CV_BGR2GRAY);
 		
@@ -112,13 +118,13 @@ public class FeatureDetection {
     
 //	    cvSmooth(im, im, CV_BLUR, 3);//Smooth image (test)
 
-		IplImage grayImgLines= IplImage.create(320, 240, IPL_DEPTH_8U, 1);
+		IplImage grayImgLines= IplImage.create(this.imgWidth, this.imgHeight, IPL_DEPTH_8U, 1);
 
 		cvCvtColor(im, grayImgLines, CV_BGR2GRAY);
 
 	    CvMemStorage storage2 = CvMemStorage.create();
 
-	    IplImage imCanny = IplImage.create(320, 240, IPL_DEPTH_8U, 1);
+	    IplImage imCanny = IplImage.create(this.imgWidth, this.imgHeight, IPL_DEPTH_8U, 1);
 //	    IplImage grayImgCanny = IplImage.create(320, 240, IPL_DEPTH_8U, 1);
 	
 	    cvCanny(grayImgLines, imCanny, 50, 200, 3);

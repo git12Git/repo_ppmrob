@@ -110,6 +110,7 @@ high-hovering state", the user can send orders to move or rotate it.
 			took off.  If no other command is supplied, the drone enters a hovering mode and
 			stays still at approximately 1 meter above ground.*/
 			this.arDroneMOCK.takeOff();
+			
 			/**
 			 * move the drone few cm up
 			 */

@@ -4,18 +4,12 @@
  * Created on 21.05.2011, 18:42:10
  */
 
-package com.codeminders.controltower;
-
-import at.ppmrob.examples.FeatureDetection;
-import at.ppmrob.examples.MyCircle;
-import at.ppmrob.examples.MyLine;
+package at.ppmrob.drone.example;
 
 import com.codeminders.ardrone.ARDrone;
 import com.codeminders.ardrone.DroneVideoListener;
 
 import com.codeminders.ardrone.util.*;
-import com.googlecode.javacv.cpp.opencv_core.IplImage;
-
 import java.io.*;
 
 import java.awt.Color;
@@ -24,7 +18,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -38,16 +31,15 @@ import static com.googlecode.javacv.cpp.opencv_highgui.*;
  * @author normenhansen
  */
 @SuppressWarnings("serial")
-public class VideoPanel extends javax.swing.JPanel implements DroneVideoListener
+public class MyVideoPanel extends javax.swing.JPanel implements DroneVideoListener
 {
 
     private AtomicReference<BufferedImage> image          = new AtomicReference<BufferedImage>();
     private AtomicBoolean                  preserveAspect = new AtomicBoolean(true);
     private BufferedImage                  noConnection   = new BufferedImage(320, 240, BufferedImage.TYPE_INT_RGB);
 
-    private FeatureDetection featureDetection = new FeatureDetection();
     /** Creates new form VideoPanel */
-    public VideoPanel()
+    public MyVideoPanel()
     {
         initComponents();
         Graphics2D g2d = (Graphics2D) noConnection.getGraphics();
@@ -115,26 +107,13 @@ public class VideoPanel extends javax.swing.JPanel implements DroneVideoListener
                 height = (int) (widthUnit * 3);
             }
         }
-//        IplImage b = IplImage.createFrom(im);  //convert BufferedImage "a" into IplImage "b"
-//        FeatureDetection fd = new FeatureDetection();
-//        fd.detectCircles(b);
-//        im = b.getBufferedImage();  // convert IplImage "b" from previous step, back into a BufferedImage "c
+        IplImage b = IplImage.createFrom(im);  //convert BufferedImage "a" into IplImage "b"
         
+        
+        im = b.getBufferedImage();  // convert IplImage "b" from previous step, back into a BufferedImage "c
         if(im != null)
         {
-//        	featureDetection.initWidthAndHeight(im.getWidth(), im.getHeight());
-//            g2d.drawImage(im, xPos, yPos, width, height, null);
-            System.out.println("height:"+im.getHeight());
-            System.out.println("width:"+im.getWidth());
-        	IplImage iplImg = IplImage.createFrom(im);
-        	Vector<MyLine> detectedLines = featureDetection.detectLines(iplImg);
-        	Vector<MyCircle> detectedCircles = featureDetection.detectCircles(iplImg);
-        	
-        	IplImage imgWithCircles = featureDetection.drawCircles(iplImg, detectedCircles);
-        	IplImage imgWithLinesAndCircles = featureDetection.drawLines(imgWithCircles, detectedLines);
-            
-        	
-        	g2d.drawImage(imgWithLinesAndCircles.getBufferedImage(), xPos, yPos, width, height, null);
+            g2d.drawImage(im, xPos, yPos, width, height, null);
         }
     }
 
