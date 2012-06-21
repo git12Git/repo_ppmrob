@@ -21,6 +21,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+import java.awt.event.WindowListener;
+import java.awt.event.WindowStateListener;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
@@ -30,9 +34,9 @@ public class AppWindows {
 
 	
 	private ARDrone arDrone;
-	private final int CONNECT_TIMEOUT = 7000;
+	private final int CONNECT_TIMEOUT = 2000;
 	private VideoPanelCustom videoPanelDrone;
-	private NavData navDataFromDrone;
+	private NavData navDataFromDrone = new NavData();
 	/**
 	 * Launch the application.
 	 */
@@ -57,6 +61,7 @@ public class AppWindows {
 	public AppWindows() {
 		initialize();
 		initDrone();
+		initClosingListener();
 		
 	}
 
@@ -131,15 +136,15 @@ public class AppWindows {
 				// TODO Auto-generated method stub
 				 float left_tilt = -0.1f;
 				 float right_tilt = 0.1f;
-				 
-                 float front_tilt = 0.1f;
-                 float back_tilt = -0.1f;
+				 //forward NEED TO BE MINUS
+                 float front_tilt = -0.1f;
+                 float back_tilt = 0.1f;
                  
                  float vertical_speed_up = 0.1f;
                  float vertical_speed_down = -0.1f;
                  
-                 float angular_speed_right = 0.1f;
-                 float angular_speed_left = -0.1f;
+                 float angular_speed_right = 0.3f;
+                 float angular_speed_left = -0.3f;
                  
 				System.out.println("released:"+e.getKeyCode());
 				int released = e.getKeyCode();
@@ -151,8 +156,91 @@ public class AppWindows {
 							break;
 						case KeyEvent.VK_SPACE:
 								AppWindows.this.arDrone.land();
-//								AppWindows.this.arDrone.sendEmergencySignal();
+								AppWindows.this.arDrone.sendEmergencySignal();
 							break;
+						case KeyEvent.VK_W:   // go forward
+							AppWindows.this.arDrone.move(0.0f, front_tilt, 0.0f, 0.0f);
+							break;
+						case KeyEvent.VK_S:  // go backward
+							AppWindows.this.arDrone.move(0.0f, back_tilt, 0.0f, 0.0f);
+							break;
+						case KeyEvent.VK_A:  // go left
+							AppWindows.this.arDrone.move(left_tilt, 0.0f, 0.0f, 0.0f);
+							break;
+						case KeyEvent.VK_D:   // go right
+							AppWindows.this.arDrone.move(right_tilt, 0.0f, 0.0f, 0.0f);
+							break;
+						case KeyEvent.VK_UP:   // go foreward
+							AppWindows.this.arDrone.move(0.0f, front_tilt, 0.0f, 0.0f);
+							break;
+						case KeyEvent.VK_DOWN: // go backward
+							AppWindows.this.arDrone.move(0.0f, back_tilt, 0.0f, 0.0f);
+							break;
+						case KeyEvent.VK_LEFT:  // go left
+							AppWindows.this.arDrone.move(left_tilt, 0.0f, 0.0f, 0.0f);
+							break;
+						case KeyEvent.VK_RIGHT:	// go right
+							AppWindows.this.arDrone.move(right_tilt, 0.0f, 0.0f, 0.0f);
+							break;
+						case KeyEvent.VK_X:	// turn right
+							AppWindows.this.arDrone.move(0.0f, 0.0f, 0.0f, angular_speed_right);
+							break;
+						case KeyEvent.VK_Y:	// turn left
+							AppWindows.this.arDrone.move(0.0f, 0.0f, 0.0f, angular_speed_left);
+							break;
+						case KeyEvent.VK_H:	// go up
+							AppWindows.this.arDrone.move(0.0f, 0.0f, vertical_speed_up, 0.0f);
+							break;
+						case KeyEvent.VK_L:	//go down
+							AppWindows.this.arDrone.move(0.0f, 0.0f, vertical_speed_down, 0.0f);
+							break;
+						case KeyEvent.VK_5:
+							AppWindows.this.arDrone.selectVideoChannel(VideoChannel.HORIZONTAL_ONLY);
+							break;
+						case KeyEvent.VK_6:
+							AppWindows.this.arDrone.selectVideoChannel(VideoChannel.VERTICAL_ONLY);
+							break;
+						case KeyEvent.VK_7:
+							AppWindows.this.arDrone.selectVideoChannel(VideoChannel.HORIZONTAL_IN_VERTICAL);
+							break;
+						case KeyEvent.VK_8:
+							AppWindows.this.arDrone.selectVideoChannel(VideoChannel.VERTICAL_IN_HORIZONTAL);
+							break;
+						}
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub
+				 float left_tilt = -0.1f;
+				 float right_tilt = 0.1f;
+				 
+				 //forward NEED TO BE MINUS
+                float front_tilt = -0.1f;
+                float back_tilt = 0.1f;
+                
+                float vertical_speed_up = 0.1f;
+                float vertical_speed_down = -0.1f;
+                
+                float angular_speed_right = 0.3f;
+                float angular_speed_left = -0.3f;
+                
+				System.out.println("released:"+e.getKeyCode());
+				int pressed = e.getKeyCode();
+				
+				try {
+						switch(pressed){
+//						case KeyEvent.VK_ENTER:
+//								AppWindows.this.arDrone.takeOff();
+//							break;
+//						case KeyEvent.VK_SPACE:
+//								AppWindows.this.arDrone.land();
+//								AppWindows.this.arDrone.sendEmergencySignal();
+//							break;
 						case KeyEvent.VK_W:   // go forward
 							AppWindows.this.arDrone.move(0.0f, front_tilt, 0.0f, 0.0f);
 							break;
@@ -195,15 +283,64 @@ public class AppWindows {
 					e1.printStackTrace();
 				}
 			}
-			
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("pressed:"+e.getKeyCode());
-			}
 		});
 	}
 	
+	
+	
+	public void initClosingListener(){
+
+		frame.addWindowListener(new WindowListener() {
+		
+			@Override
+			public void windowOpened(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowIconified(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeiconified(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeactivated(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowClosed(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				try {
+					arDrone.disconnect();
+					System.out.println("DISCONNECTED");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			@Override
+			public void windowActivated(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
 	
 	public void initDrone(){
 		try {
@@ -222,12 +359,14 @@ public class AppWindows {
 			
 			@Override
 			public void navDataReceived(NavData nd) {
-				// TODO Auto-generated method stub
-//				synchronized(AppWindows.this.navDataFromDrone){
-//					AppWindows.this.navDataFromDrone = nd;
-//				}
+				synchronized(AppWindows.this.navDataFromDrone){
+					
+					//this can be use later with UAV operations
+					AppWindows.this.navDataFromDrone = nd;
+				}
 			}
 		});
+		this.arDrone.addNavDataListener(videoPanelDrone);
 		
 		this.arDrone.addStatusChangeListener(new DroneStatusChangeListener() {
 			

@@ -12,8 +12,8 @@ import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 public class FeatureDetection {
 
-	private int imgHeight = 240; //240 144
-	private int imgWidth = 320; //320 176
+	private int height2 = 240; //240 144
+	private int width2 = 320; //320 176
 	
 	public FeatureDetection ()
 	{
@@ -22,8 +22,8 @@ public class FeatureDetection {
 	
 	
 	public void initWidthAndHeight(int imgWidth, int imgHeight){
-		this.imgWidth=imgHeight;
-		this.imgHeight = imgWidth;
+//		this.imgWidth=imgHeight;
+//		this.imgHeight = imgWidth;
 	}
 	
 	
@@ -33,14 +33,14 @@ public class FeatureDetection {
 	 * @param im2
 	 * @return
 	 */
-	public Vector<MyCircle> detectCircles(IplImage im)
+	public synchronized Vector<MyCircle> detectCircles(IplImage im, int width, int height)
 	{
-
+		
 //		IplImage img = IplImage.createFrom(im);
 		
 		Vector<MyCircle> detectedCircles = new Vector<MyCircle>();
 		
-		IplImage grayImgCircles = IplImage.create(this.imgWidth, this.imgHeight, IPL_DEPTH_8U, 1);
+		IplImage grayImgCircles = IplImage.create(width, height, IPL_DEPTH_8U, 1);
 
 		cvCvtColor(im, grayImgCircles, CV_BGR2GRAY);
 		
@@ -88,7 +88,7 @@ public class FeatureDetection {
 	 * @param detectedCircles
 	 * @return
 	 */
-	public IplImage drawCircles(IplImage img, Vector<MyCircle> detectedCircles){
+	public synchronized IplImage drawCircles(IplImage img, Vector<MyCircle> detectedCircles){
 		
 		for(int i=0; i<detectedCircles.size(); i++){
 		  cvCircle(img, detectedCircles.get(i).center, 3, CvScalar.GREEN/*CV_RGB(100, 0, 0)*/, -1, 8, 0);
@@ -107,30 +107,32 @@ public class FeatureDetection {
 	 * @param im
 	 * @return
 	 */
-	public Vector<MyLine> detectLines(IplImage im)
+	public synchronized Vector<MyLine> detectLines(IplImage im, int width, int height)
 	{
 		Vector<MyLine> detectedLines = new Vector<MyLine>();
     
 //	    cvSmooth(im, im, CV_BLUR, 3);//Smooth image (test)
 
-		IplImage grayImgLines= IplImage.create(this.imgWidth, this.imgHeight, IPL_DEPTH_8U, 1);
+		IplImage grayImgLines= IplImage.create(width, height, IPL_DEPTH_8U, 1);
 
 		cvCvtColor(im, grayImgLines, CV_BGR2GRAY);
 
 	    CvMemStorage storage2 = CvMemStorage.create();
 
-	    IplImage imCanny = IplImage.create(this.imgWidth, this.imgHeight, IPL_DEPTH_8U, 1);
+	    IplImage imCanny = IplImage.create(width, height, IPL_DEPTH_8U, 1);
 //	    IplImage grayImgCanny = IplImage.create(320, 240, IPL_DEPTH_8U, 1);
 	
 	    cvCanny(grayImgLines, imCanny, 50, 200, 3);
 //	    cvCvtColor(imCanny, grayImgCanny, CV_BGR2GRAY);
-	    
+
 	    CvSeq lines = cvHoughLines2( imCanny, storage2, CV_HOUGH_PROBABILISTIC, 1, 3.1415926/180, 50, 80, 10 );
 	    System.out.println("lines detected: "+lines.total());
 	    for(int i = 0; i < lines.total(); i++ )
 	    {
 	    	Pointer line = cvGetSeqElem(lines, i);
 	    	detectedLines.add(new MyLine(new CvPoint(line).position(0), new CvPoint(line).position(1)));
+	    	MyLine myLine = new MyLine(new CvPoint(line).position(0), new CvPoint(line).position(1));
+	    	System.out.println("x1:"+myLine.point1.x()+"y1:"+myLine.point1.y()+"__x2:"+myLine.point2.x()+"y2:"+myLine.point2.y());
 //	    	cvLine(im, new CvPoint(line).position(0), 
 //	        		new CvPoint(line).position(1), CvScalar.BLUE, 2, CV_AA, 0);
 	    }
@@ -141,7 +143,28 @@ public class FeatureDetection {
 	
 	
 	
+	/**
+	 * 
+	 * @param im
+	 * @return
+	 */
+	public synchronized IplImage getCanny(IplImage im, int width, int height)
+	{
+		
+    
+//	    cvSmooth(im, im, CV_BLUR, 3);//Smooth image (test)
+
+		IplImage grayImgLines= IplImage.create(width, height, IPL_DEPTH_8U, 1);
+
+		cvCvtColor(im, grayImgLines, CV_BGR2GRAY);
+
+	    IplImage imCanny = IplImage.create(width, height, IPL_DEPTH_8U, 1);
+//	    IplImage grayImgCanny = IplImage.create(320, 240, IPL_DEPTH_8U, 1);
 	
+	    cvCanny(grayImgLines, imCanny, 50, 200, 3);
+//	    cvCvtColor(imCanny, grayImgCanny, CV_BGR2GRAY);
+	    return grayImgLines;
+	}
 	
 	
 	/**
@@ -150,7 +173,7 @@ public class FeatureDetection {
 	 * @param detectedlines
 	 * @return
 	 */
-	public IplImage drawLines(IplImage img, Vector<MyLine> detectedlines){
+	public synchronized IplImage drawLines(IplImage img, Vector<MyLine> detectedlines){
 		 
 		for(int i = 0; i < detectedlines.size(); i++ )
 		    {

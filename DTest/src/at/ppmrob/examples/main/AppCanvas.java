@@ -45,9 +45,10 @@ public class AppCanvas {
         Thread.sleep(100);
        
        if (img != null) {      
-    	  
-       	Vector<MyLine> detectedLines = fd.detectLines(img);
-       	Vector<MyCircle> detectedCircles = fd.detectCircles(img);
+    	int w = 320;
+    	int h = 240;
+       	Vector<MyLine> detectedLines = fd.detectLines(img, w, h);
+       	Vector<MyCircle> detectedCircles = fd.detectCircles(img, w, h);
        	IplImage imgWithLines = fd.drawLines(img, detectedLines);
        	IplImage imgWithLinesAndCircles = fd.drawCircles(imgWithLines, detectedCircles);
     	

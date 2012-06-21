@@ -4,8 +4,8 @@ import com.googlecode.javacv.cpp.opencv_core.CvPoint;
 
 public class MyCircle {
 
-	CvPoint center;
-	int radius;
+	public CvPoint center;
+	public int radius;
 	
 	public MyCircle(CvPoint center, int r){
 		this.center=center;
