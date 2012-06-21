@@ -26,8 +26,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
+import javax.swing.JApplet;
+import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
+import javax.swing.JButton;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 /**
  * The central class that represents the main window and also manages the
@@ -109,6 +114,7 @@ public class ControlTower extends javax.swing.JFrame implements DroneStatusChang
         video.setDrone(drone);
         drone.addStatusChangeListener(this);
         drone.addNavDataListener(this);
+        
     }
 
     private static void loadNativeHIDLibrary()
@@ -527,7 +533,8 @@ public class ControlTower extends javax.swing.JFrame implements DroneStatusChang
         jSeparator6 = new javax.swing.JToolBar.Separator();
         videoPanel = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-
+        jPanelControl = new JPanel();
+        jPanelControl = new javax.swing.JPanel();
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Control Tower");
 
@@ -647,6 +654,7 @@ public class ControlTower extends javax.swing.JFrame implements DroneStatusChang
         videoPanel.setLayout(new javax.swing.BoxLayout(videoPanel, javax.swing.BoxLayout.LINE_AXIS));
 
         jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.LINE_AXIS));
+        jPanelControl.setLayout(new javax.swing.BoxLayout(jPanelControl, javax.swing.BoxLayout.LINE_AXIS));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -655,6 +663,8 @@ public class ControlTower extends javax.swing.JFrame implements DroneStatusChang
                 .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
                 .addComponent(videoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
+               
+                
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -745,6 +755,8 @@ public class ControlTower extends javax.swing.JFrame implements DroneStatusChang
     private javax.swing.JButton instrumentButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanelControl;
+    
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator5;
@@ -753,5 +765,4 @@ public class ControlTower extends javax.swing.JFrame implements DroneStatusChang
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JButton mappingButton;
     private javax.swing.JPanel videoPanel;
-    // End of variables declaration//GEN-END:variables
 }

@@ -2,23 +2,18 @@ package at.ppmrob.examples;
 
 import static com.googlecode.javacv.cpp.opencv_core.*;
 import static com.googlecode.javacv.cpp.opencv_imgproc.*;
-import static com.googlecode.javacv.cpp.opencv_highgui.*;
 
-import java.awt.image.BufferedImage;
 import java.util.Vector;
 
-import com.codeminders.ardrone.Point;
 import com.googlecode.javacpp.FloatPointer;
 import com.googlecode.javacpp.Pointer;
-import com.googlecode.javacv.CanvasFrame;
-import com.googlecode.javacv.cpp.opencv_core.CvMat;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 
 public class FeatureDetection {
 
-	private int imgHeight = 144; //240
-	private int imgWidth = 176; //320 176
+	private int imgHeight = 240; //240 144
+	private int imgWidth = 320; //320 176
 	
 	public FeatureDetection ()
 	{

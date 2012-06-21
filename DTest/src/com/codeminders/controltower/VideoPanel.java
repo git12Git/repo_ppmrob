@@ -90,6 +90,7 @@ public class VideoPanel extends javax.swing.JPanel implements DroneVideoListener
     private void drawDroneImage(Graphics2D g2d, int width, int height)
     {
         BufferedImage im = image.get();
+//        im = (BufferedImage)im.getScaledInstance(320, 240, BufferedImage.SCALE_DEFAULT);
         if(im == null)
         {
             return;
@@ -123,18 +124,18 @@ public class VideoPanel extends javax.swing.JPanel implements DroneVideoListener
         if(im != null)
         {
 //        	featureDetection.initWidthAndHeight(im.getWidth(), im.getHeight());
-//            g2d.drawImage(im, xPos, yPos, width, height, null);
-            System.out.println("height:"+im.getHeight());
-            System.out.println("width:"+im.getWidth());
-        	IplImage iplImg = IplImage.createFrom(im);
-        	Vector<MyLine> detectedLines = featureDetection.detectLines(iplImg);
-        	Vector<MyCircle> detectedCircles = featureDetection.detectCircles(iplImg);
-        	
-        	IplImage imgWithCircles = featureDetection.drawCircles(iplImg, detectedCircles);
-        	IplImage imgWithLinesAndCircles = featureDetection.drawLines(imgWithCircles, detectedLines);
-            
-        	
-        	g2d.drawImage(imgWithLinesAndCircles.getBufferedImage(), xPos, yPos, width, height, null);
+            g2d.drawImage(im, xPos, yPos, width, height, null);
+//            System.out.println("height:"+im.getHeight());
+//            System.out.println("width:"+im.getWidth());
+//        	IplImage iplImg = IplImage.createFrom(im);
+//        	Vector<MyLine> detectedLines = featureDetection.detectLines(iplImg);
+//        	Vector<MyCircle> detectedCircles = featureDetection.detectCircles(iplImg);
+//        	
+//        	IplImage imgWithCircles = featureDetection.drawCircles(iplImg, detectedCircles);
+//        	IplImage imgWithLinesAndCircles = featureDetection.drawLines(imgWithCircles, detectedLines);
+//            
+//        	
+//        	g2d.drawImage(imgWithLinesAndCircles.getBufferedImage(), xPos, yPos, width, height, null);
         }
     }
 
