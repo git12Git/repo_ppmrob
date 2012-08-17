@@ -24,8 +24,6 @@ import com.codeminders.ardrone.ARDrone;
 import com.codeminders.ardrone.DroneVideoListener;
 
 import com.googlecode.javacpp.Pointer;
-import com.googlecode.javacv.FrameGrabber;
-import com.googlecode.javacv.FrameGrabber.Exception;
 import com.googlecode.javacv.cpp.avcodec.LPDIRECT3DSURFACE9;
 import com.googlecode.javacv.cpp.opencv_core.CvMemStorage;
 import com.googlecode.javacv.cpp.opencv_core.CvPoint;
