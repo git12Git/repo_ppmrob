@@ -238,6 +238,7 @@ public class VideoPanelCustom extends javax.swing.JPanel implements DroneVideoLi
 		droneIsBatteryTooHigh = this.droneNavData.isBatteryTooHigh();
 		droneIsBatteryTooLow = this.droneNavData.isBatteryTooLow();
 		droneIsEmergency = this.droneNavData.isEmergency();
+		
 	
 	}
 	
