@@ -164,7 +164,7 @@ public class AutoPilot implements DroneVideoListener, NavDataListener {
 	
 	
 	
-	public Point2D.Double averageCenterOfFoundCircles(Vector<MyCircle> foundCircles) {
+	public synchronized Point2D.Double updateAverageCenterOfFoundCircles(Vector<MyCircle> foundCircles, int w, int h) {
 		int circlesCount = 0;
 		int xCoordCount = 0;
 		int yCoordCount = 0;
@@ -177,11 +177,17 @@ public class AutoPilot implements DroneVideoListener, NavDataListener {
 					yCoordCount+=circle_n.center.y();
 				}
 				averageCirclesCenter.setLocation((xCoordCount/circlesCount), (yCoordCount/circlesCount));
+				
+				this.dronePleaseStayOver_Current_Bullseye(w, h);
+				
 				return averageCirclesCenter;
 			}
 		} 
 			//go back to bullseye ?!?!
 			averageCirclesCenter.setLocation(20, 80);
+			
+			this.dronePleaseStayOver_Current_Bullseye(w, h);
+			
 			return averageCirclesCenter;
 		}
 	
@@ -203,7 +209,7 @@ public class AutoPilot implements DroneVideoListener, NavDataListener {
 	 * @param w
 	 * @param h
 	 */
-	public void dronePleaseStayOver_Current_Bullseye(Point2D.Double averageCircCenter, int w, int h){
+	private void dronePleaseStayOver_Current_Bullseye(int w, int h){
 		/**
 		 * ich bin nicht sicher aber ich glaube mich zu erinnern das bei der drone die width und height umkehrt
 		 * waren ??? (drone width == standard height   &   drone height == standard width)
@@ -217,7 +223,7 @@ public class AutoPilot implements DroneVideoListener, NavDataListener {
 		Rectangle2D.Double redZone_bullseye_left_side = new Rectangle2D.Double(0, w, h*0.33f, w);
 		Rectangle2D.Double redZone_bullseye_right_side = new Rectangle2D.Double(h*0.66f, w, h*0.33f, w);
 		
-		if(!greenZone_bullseye.contains(averageCircCenter)){
+		if(!greenZone_bullseye.contains(averageCirclesCenter)){
 		    //TODO CIRCLE OUT OF SIGHT
 			//TODO drone go backward/forward
 			
@@ -226,11 +232,11 @@ public class AutoPilot implements DroneVideoListener, NavDataListener {
 			
 			
 			
-			while(redZone_bullseye_left_side.contains(averageCircCenter)){
+			while(redZone_bullseye_left_side.contains(averageCirclesCenter)){
 		        // drone go right
 				try {
 					this.drone.move(0.1f, 0.0f, 0.0f, 0.0f);
-					Thread.sleep(700);
+					Thread.sleep(1000);
 					countMoves++;
 					if(countMoves>15){
 						this.drone.land();
@@ -246,11 +252,11 @@ public class AutoPilot implements DroneVideoListener, NavDataListener {
 			
 			
 			
-			while(redZone_bullseye_right_side.contains(averageCircCenter)){
+			while(redZone_bullseye_right_side.contains(averageCirclesCenter)){
 			   // drone go left
 				try {
 					this.drone.move(-0.1f, 0.0f, 0.0f, 0.0f);
-					Thread.sleep(700);
+					Thread.sleep(1000);
 					countMoves++;
 					if(countMoves>15){
 						this.drone.land();
@@ -285,7 +291,7 @@ public class AutoPilot implements DroneVideoListener, NavDataListener {
 	 * @param w
 	 * @param h
 	 */
-	public void dronePleaseFollowTheLine(Point2D.Double averageCircCenter, int w, int h){
+	private void dronePleaseFollowTheLine(Point2D.Double averageCircCenter, int w, int h){
 		/**
 		 * ich bin nicht sicher aber ich glaube mich zu erinnern das bei der drone die width und height umkehrt
 		 * waren ??? (drone width == standard height   &   drone height == standard width)
