@@ -31,6 +31,12 @@ public class AutoPilot implements DroneVideoListener, NavDataListener{
 	    IplImage imgWithCircles;
 		IplImage imgWithLines;
 
+		 float left_tilt = -0.1f;
+		 float right_tilt = 0.1f;
+		 //forward NEED TO BE MINUS
+        float front_tilt = -0.1f;
+        float back_tilt = 0.1f;
+		
 	@Override
 	public void navDataReceived(NavData nd) {
 		// TODO Auto-generated method stub
@@ -59,17 +65,46 @@ public class AutoPilot implements DroneVideoListener, NavDataListener{
 	        }
 	}
 
+    //This method is when its NOT called by another class
+    public static void main(String[] args)
+    {
+        ARDrone drone;
+        try
+        {
+            // Create ARDrone object,
+            // connect to drone and initialize it.
+            drone = new ARDrone();
+            AutoPilot sophisticatedpilot = new AutoPilot(drone);
+        }
+        catch(Throwable e)
+        {
+            e.printStackTrace();
+        }
+    }
+
 	public AutoPilot(ARDrone drone) {
 		super();
 		this.drone = drone;
-		
 		try {
+			
+        drone.connect();
+        drone.clearEmergencySignal();
+
+            // Wait until drone is ready
+       drone.waitForReady(3000);
+
+            // do TRIM operation
+        drone.trim();
+
 		//Take off
 		drone.takeOff();
 		
 		//Turn around 360 degrees
 		
 		//Follow the lines
+		int times = 0;
+		while(times < 1000)
+		{
 		double averageangle = 0;
 		for(int i = 0; i < detectedLines.size(); i++)
 		{
@@ -80,7 +115,16 @@ public class AutoPilot implements DroneVideoListener, NavDataListener{
 					detectedLines.elementAt(i).point2.y());
 		}
 		averageangle /= detectedLines.size();
-
+		if(averageangle > 60 && averageangle < 120)
+			drone.move(0.0f, front_tilt, 0.0f, 0.0f);
+		else if(averageangle <= 60)
+			drone.move(left_tilt, 0.0f, 0.0f, 0.0f);
+		else if(averageangle >= 120)
+			drone.move(right_tilt, 0.0f, 0.0f, 0.0f);
+		else drone.land();
+		times++;
+		}
+		
 		//Get the average of the line angles and go that way
 		
 		//Land
