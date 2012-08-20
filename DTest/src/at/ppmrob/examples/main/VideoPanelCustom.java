@@ -58,6 +58,17 @@ public class VideoPanelCustom extends javax.swing.JPanel implements DroneVideoLi
     
     FeatureDetection featureDetection = new FeatureDetection();
     
+    
+    
+    IplImage iplImg_lines;
+    IplImage iplImg_circles;
+    Vector<MyLine> detectedLines;
+	Vector<MyCircle> detectedCircles;
+    IplImage imgWithCircles;
+	IplImage imgWithLines;
+
+	
+	
     /** Creates new form VideoPanel */
     public VideoPanelCustom()
     {
@@ -198,13 +209,7 @@ public class VideoPanelCustom extends javax.swing.JPanel implements DroneVideoLi
             
         }
     }
-    IplImage iplImg_lines;
-    IplImage iplImg_circles;
-    Vector<MyLine> detectedLines;
-	Vector<MyCircle> detectedCircles;
-    IplImage imgWithCircles;
-	IplImage imgWithLines;
-
+  
 
     
     /**
