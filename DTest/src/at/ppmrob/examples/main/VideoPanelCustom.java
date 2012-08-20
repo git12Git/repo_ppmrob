@@ -155,24 +155,24 @@ public class VideoPanelCustom extends javax.swing.JPanel implements DroneVideoLi
         	 * 
         	 * if i make a copy of the image and draw directly on it without cv there are less errors
         	 */
-        	BufferedImage imgLines = new BufferedImage(w, h, im.getType());
-        	int pixelsRGB_l[] = new int[w*h];
-        	imgLines.setRGB(0, 0, w, h, im.getRGB(0, 0, w, h, pixelsRGB_l, 0, w), 0, w);
+//        	BufferedImage imgLines = new BufferedImage(w, h, im.getType());
+//        	int pixelsRGB_l[] = new int[w*h];
+//        	imgLines.setRGB(0, 0, w, h, im.getRGB(0, 0, w, h, pixelsRGB_l, 0, w), 0, w);
         	
         	
         	iplImg_lines = IplImage.createFrom(im);
         	detectedLines = featureDetection.detectLines(iplImg_lines, w, h);
-//        	imgWithLines = featureDetection.drawLines(iplImg_lines, detectedLines);
+        	imgWithLines = featureDetection.drawLines(iplImg_lines, detectedLines);
 
 //        	iplImg_circles = IplImage.createFrom(imgCircles);
-//        	detectedCircles = featureDetection.detectCircles(iplImg_circles, w, h);
-//        	imgWithCircles = featureDetection.drawCircles(iplImg_circles, detectedCircles);
+        	detectedCircles = featureDetection.detectCircles(imgWithLines, w, h);
+        	imgWithCircles = featureDetection.drawCircles(imgWithLines, detectedCircles);
 
-        	Graphics imageGraphics = im.getGraphics();
-        	imageGraphics.setColor(Color.GREEN);
-            for(MyLine line:detectedLines){
-            	imageGraphics.drawLine(line.point1.x(), line.point1.y(), line.point2.x(), line.point2.y());
-        	}
+//        	Graphics imageGraphics = im.getGraphics();
+//        	imageGraphics.setColor(Color.GREEN);
+//            for(MyLine line:detectedLines){
+//            	imageGraphics.drawLine(line.point1.x(), line.point1.y(), line.point2.x(), line.point2.y());
+//        	}
 //            for(MyCircle circle:detectedCircles){
 //            	imageGraphics.drawOval(circle.center.x(), circle.center.y(), circle.radius, circle.radius);
 //        	}
