@@ -20,8 +20,8 @@ public class AutoPilot implements DroneVideoListener, NavDataListener{
 
 	private ARDrone drone;
 	public static double PI = 3.14159265;
-	  private AtomicReference<BufferedImage> image          = new AtomicReference<BufferedImage>();
-	    FeatureDetection featureDetection = new FeatureDetection();
+	private AtomicReference<BufferedImage> image          = new AtomicReference<BufferedImage>();
+	FeatureDetection featureDetection = new FeatureDetection();
 	  
 	  
 	  IplImage iplImg_lines;
