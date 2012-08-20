@@ -57,7 +57,7 @@ public class FeatureDetection {
 
 	    CvSeq circles = cvHoughCircles(grayImgCircles, storage, CV_HOUGH_GRADIENT, 1, 7, 100, 70, 0, 0);
 
-	    storage.release();
+//	    storage.release();
 	    
 	    System.out.println("circles detected: " + circles.total());
         for (int i = 0; i < circles.total(); i++) {
@@ -137,7 +137,7 @@ public class FeatureDetection {
 //	        		new CvPoint(line).position(1), CvScalar.BLUE, 2, CV_AA, 0);
 	    }
 
-	    storage2.release();
+	    //storage2.release();
 	 return detectedLines;
 	}
 	

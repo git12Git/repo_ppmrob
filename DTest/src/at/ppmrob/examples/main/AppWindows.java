@@ -32,7 +32,7 @@ public class AppWindows {
 
 	private JFrame frame;
 
-	
+	private AutoPilot autoPilot;
 	private ARDrone arDrone;
 	private final int CONNECT_TIMEOUT = 2000;
 	private VideoPanelCustom videoPanelDrone;
@@ -355,7 +355,7 @@ public class AppWindows {
 //        this.videoPanelDrone.setDrone(arDrone);
 		this.arDrone.selectVideoChannel(VideoChannel.HORIZONTAL_ONLY);
 		
-		this.arDrone.addNavDataListener(new NavDataListener() {
+		/*this.arDrone.addNavDataListener(new NavDataListener() {
 			
 			@Override
 			public void navDataReceived(NavData nd) {
@@ -366,7 +366,11 @@ public class AppWindows {
 				}
 			}
 		});
+		*/
+		autoPilot = new AutoPilot(this.arDrone);
+		arDrone.addNavDataListener(autoPilot);
 		this.arDrone.addNavDataListener(videoPanelDrone);
+		arDrone.addImageListener(autoPilot);
 		
 		this.arDrone.addStatusChangeListener(new DroneStatusChangeListener() {
 			
