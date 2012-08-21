@@ -158,6 +158,12 @@ public class AppWindows {
 								AppWindows.this.arDrone.land();
 								AppWindows.this.arDrone.sendEmergencySignal();
 							break;
+						case KeyEvent.VK_P:  // AutoPilot test
+							autoPilot.getFeatures(videoPanelDrone.detectedLines,
+									videoPanelDrone.detectedCircles);
+							autoPilot.moveAlongLines();
+							autoPilot.stayInMiddle();
+							break;
 						case KeyEvent.VK_W:   // go forward
 							AppWindows.this.arDrone.move(0.0f, front_tilt, 0.0f, 0.0f);
 							break;
@@ -234,13 +240,16 @@ public class AppWindows {
 				
 				try {
 						switch(pressed){
-//						case KeyEvent.VK_ENTER:
-//								AppWindows.this.arDrone.takeOff();
-//							break;
-//						case KeyEvent.VK_SPACE:
-//								AppWindows.this.arDrone.land();
-//								AppWindows.this.arDrone.sendEmergencySignal();
-//							break;
+						case KeyEvent.VK_ENTER:
+								AppWindows.this.arDrone.takeOff();
+							break;
+						case KeyEvent.VK_SPACE:
+								AppWindows.this.arDrone.land();
+								AppWindows.this.arDrone.sendEmergencySignal();
+							break;
+						case KeyEvent.VK_P:   // AutoPilot test
+							autoPilot.stayInMiddle();
+							break;
 						case KeyEvent.VK_W:   // go forward
 							AppWindows.this.arDrone.move(0.0f, front_tilt, 0.0f, 0.0f);
 							break;

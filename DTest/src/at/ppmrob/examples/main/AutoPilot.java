@@ -45,13 +45,14 @@ public class AutoPilot implements DroneVideoListener, NavDataListener {
 	@Override
 	public void navDataReceived(NavData nd) {
 		// TODO Auto-generated method stub
-
+    //Not sure whether this one is needed!
 	}
 
 	@Override
 	public void frameReceived(int startX, int startY, int w, int h,
 			int[] rgbArray, int offset, int scansize) {
 
+		//Not sure whether this method is needed! Use getFeatures() instead
 		BufferedImage im = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 		im.setRGB(startX, startY, w, h, rgbArray, offset, scansize);
 
@@ -77,16 +78,7 @@ public class AutoPilot implements DroneVideoListener, NavDataListener {
 			// connect to drone and initialize it.
 			drone = new ARDrone();
 			AutoPilot sophisticatedpilot = new AutoPilot(drone);
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-	}
-
-	public AutoPilot(ARDrone drone) {
-		super();
-		this.drone = drone;
-		try {
-
+			
 			drone.connect();
 			drone.clearEmergencySignal();
 
@@ -102,8 +94,26 @@ public class AutoPilot implements DroneVideoListener, NavDataListener {
 			// Turn around 360 degrees
 
 			// Follow the lines
-			int times = 0;
-			while (times < 100) {
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+	}
+
+	public AutoPilot(ARDrone drone) {
+		super();
+		this.drone = drone;
+	}
+	
+	public void getFeatures(Vector<MyLine> detectedLines,
+					Vector<MyCircle> detectedCircles)
+		{
+		this.detectedLines = detectedLines;
+		this.detectedCircles = detectedCircles;
+		}//
+	
+	public void moveAlongLines() {
+		try {
+
 				double averageangle = 0;
 				for (int i = 0; i < detectedLines.size(); i++) {
 
@@ -122,15 +132,6 @@ public class AutoPilot implements DroneVideoListener, NavDataListener {
 					drone.move(right_tilt, 0.0f, 0.0f, 0.0f);
 				else
 					drone.land();
-				/*
-				 * this.addKeyListener(new KeyListener() { public void
-				 * keyTyped(KeyEvent e) {} public void keyReleased(KeyEvent e)
-				 * {} public void keyPressed(KeyEvent e) {}
-				 * 
-				 * });
-				 */
-				times++;
-			}
 
 			// Get the average of the line angles and go that way
 
@@ -161,8 +162,30 @@ public class AutoPilot implements DroneVideoListener, NavDataListener {
 		return angle;
 	}
 
-	
-	
+	//Get the average X coordinates of lines and try to converge to the middle
+	public void stayInMiddle()
+	{
+		double averageX = 0;
+		final int middle = 160;
+		final int threshold = 50;
+		
+		for (int i = 0; i < detectedLines.size(); i++) {
+
+			averageX +=
+					(detectedLines.elementAt(i).point1.x() +
+					detectedLines.elementAt(i).point2.x()) / 2;
+		}// for
+		averageX /= detectedLines.size();
+		
+		//Now decide whether to accelerate right or left or stay at place
+		try{
+		if(averageX > middle + threshold)
+			drone.move(right_tilt, 0.0f, 0.0f, 0.0f);
+		else if(averageX < middle - threshold)
+			drone.move(left_tilt, 0.0f, 0.0f, 0.0f);
+		} catch(IOException e) {e.printStackTrace();}
+		
+	}// stayInMiddle
 	
 	public synchronized Point2D.Double updateAverageCenterOfFoundCircles(Vector<MyCircle> foundCircles, int w, int h) {
 		int circlesCount = 0;
