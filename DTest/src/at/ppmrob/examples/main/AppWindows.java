@@ -247,7 +247,10 @@ public class AppWindows {
 								AppWindows.this.arDrone.land();
 								AppWindows.this.arDrone.sendEmergencySignal();
 							break;
-						case KeyEvent.VK_P:   // AutoPilot test
+						case KeyEvent.VK_P:  // AutoPilot test
+							autoPilot.getFeatures(videoPanelDrone.detectedLines,
+									videoPanelDrone.detectedCircles);
+							autoPilot.moveAlongLines();
 							autoPilot.stayInMiddle();
 							break;
 						case KeyEvent.VK_W:   // go forward
