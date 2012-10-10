@@ -25,6 +25,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.util.Vector;
@@ -50,6 +51,7 @@ public class VideoPanelCustom extends javax.swing.JPanel implements DroneVideoLi
     private float droneBattery;
     private String droneControlState;
     private String droneFlyingState;
+    private float droneYawDegree;
     private boolean droneIsFlying;
     private boolean droneIsBatteryTooHigh;
     private boolean droneIsBatteryTooLow;
@@ -178,7 +180,45 @@ public class VideoPanelCustom extends javax.swing.JPanel implements DroneVideoLi
 //        	iplImg_circles = IplImage.createFrom(imgCircles);
         	detectedCircles = featureDetection.detectCircles(imgWithLines, w, h);
         	imgWithCircles = featureDetection.drawCircles(imgWithLines, detectedCircles);
-
+        	
+        	 g2d.drawImage(imgWithCircles.getBufferedImage(), xPos, yPos, width, height, null);	
+        	
+        	int heightDroneCamera = width; //240 144
+        	int widthDroneCamera = height; //320 176
+        	Rectangle2D.Double redZoneLeftSideRectangle = new Rectangle2D.Double(1, 1, heightDroneCamera*0.33f, widthDroneCamera-1);
+        	Rectangle2D.Double greenZoneCenterRectangle = new Rectangle2D.Double(heightDroneCamera*0.33f, 1, heightDroneCamera*0.33f, widthDroneCamera-1);
+        	Rectangle2D.Double redZoneRightSideRectangle = new Rectangle2D.Double(heightDroneCamera*0.66f, 1, heightDroneCamera*0.33f, widthDroneCamera-1);
+        	
+        	Rectangle2D.Double upperHalfSideRectangle = new Rectangle2D.Double(1, 1, heightDroneCamera-2, widthDroneCamera*0.5);
+        	Rectangle2D.Double bottomHalfSideRectangle = new Rectangle2D.Double(1, widthDroneCamera*0.5+2, heightDroneCamera-2, widthDroneCamera*0.5f-2);
+        	
+        	g2d.setColor(Color.RED);
+        	g2d.drawRect((int)redZoneLeftSideRectangle.x, 
+        			(int)redZoneLeftSideRectangle.y, 
+        			(int)redZoneLeftSideRectangle.getWidth(), 
+        			(int)redZoneLeftSideRectangle.getHeight());
+        	g2d.setColor(Color.GREEN);
+        	g2d.drawRect((int)greenZoneCenterRectangle.x, 
+        			(int)greenZoneCenterRectangle.y, 
+        			(int)greenZoneCenterRectangle.getWidth(), 
+        			(int)greenZoneCenterRectangle.getHeight());
+        	g2d.setColor(Color.RED);
+        	g2d.drawRect((int)redZoneRightSideRectangle.x, 
+        			(int)redZoneRightSideRectangle.y, 
+        			(int)redZoneRightSideRectangle.getWidth(), 
+        			(int)redZoneRightSideRectangle.getHeight());
+        	g2d.setColor(Color.BLUE);
+        	g2d.drawRect((int)upperHalfSideRectangle.x, 
+        			(int)upperHalfSideRectangle.y, 
+        			(int)upperHalfSideRectangle.getWidth(), 
+        			(int)upperHalfSideRectangle.getHeight());
+        	g2d.setColor(Color.ORANGE);
+        	g2d.drawRect((int)bottomHalfSideRectangle.x, 
+        			(int)bottomHalfSideRectangle.y, 
+        			(int)bottomHalfSideRectangle.getWidth(), 
+        			(int)bottomHalfSideRectangle.getHeight());
+        	
+        	
 //        	Graphics imageGraphics = im.getGraphics();
 //        	imageGraphics.setColor(Color.GREEN);
 //            for(MyLine line:detectedLines){
@@ -189,7 +229,7 @@ public class VideoPanelCustom extends javax.swing.JPanel implements DroneVideoLi
 //        	}
         	
             
-            g2d.drawImage(im, xPos, yPos, width, height, null);	
+           
           
 //          g2d.drawImage(im, 0, 0, 320, 240, null);
         
@@ -206,6 +246,8 @@ public class VideoPanelCustom extends javax.swing.JPanel implements DroneVideoLi
             g2d.drawString("IS FLYING:  "+droneIsFlying, 5, 105);
             g2d.drawString("IS EMERG:   "+droneIsEmergency, 5, 120);
             g2d.drawString("RESOLUTION: "+w+"x"+h, 5, 135);
+            g2d.drawString("YAW:    "+droneYawDegree, 5, 150);
+            
             
         }
     }
@@ -243,6 +285,7 @@ public class VideoPanelCustom extends javax.swing.JPanel implements DroneVideoLi
 		droneIsBatteryTooHigh = this.droneNavData.isBatteryTooHigh();
 		droneIsBatteryTooLow = this.droneNavData.isBatteryTooLow();
 		droneIsEmergency = this.droneNavData.isEmergency();
+		droneYawDegree = this.droneNavData.getYaw();
 		
 	
 	}

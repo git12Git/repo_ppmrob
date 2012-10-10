@@ -8,16 +8,21 @@ import java.util.Vector;
 import com.googlecode.javacpp.FloatPointer;
 import com.googlecode.javacpp.Pointer;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
+import com.googlecode.javacv.cpp.opencv_stitching.ImageFeatures;
 
 
 public class FeatureDetection {
 
 	private int height2 = 240; //240 144
 	private int width2 = 320; //320 176
-	
+	private static Vector<IFeatureDetectionListener> listeners;
+//	CvMemStorage storage;
+//	CvMemStorage storage2;
 	public FeatureDetection ()
 	{
-
+		listeners = new Vector<IFeatureDetectionListener>();
+//		storage2 = CvMemStorage.create();
+//		storage = CvMemStorage.create();
 	}// FeatureDetection
 	
 	
@@ -27,7 +32,9 @@ public class FeatureDetection {
 	}
 	
 	
-	
+	public static void addFeatureDetectionListener(IFeatureDetectionListener ifdl){
+		listeners.add(ifdl);
+	}
 	/**
 	 * 
 	 * @param im2
@@ -73,7 +80,9 @@ public class FeatureDetection {
 //                cvCircle(im, new CvPoint(x,y), 3, cvScalar(0, 255, 0, 0)/*CV_RGB(100, 0, 0)*/, -1, 8, 0);
 //                cvCircle(im, new CvPoint(x,y), radius, cvScalar(0, 255, 0, 0)/*CV_RGB(100, 0, 0)*/, 1, 8, 0);
         }
-
+        for(IFeatureDetectionListener ifdl:listeners){
+        	ifdl.foundCircles(detectedCircles);
+        }
 		return detectedCircles;
 	}
 	
@@ -136,7 +145,9 @@ public class FeatureDetection {
 //	    	cvLine(im, new CvPoint(line).position(0), 
 //	        		new CvPoint(line).position(1), CvScalar.BLUE, 2, CV_AA, 0);
 	    }
-
+	    for(IFeatureDetectionListener ifdl:listeners){
+	    	ifdl.foundLines(detectedLines);
+	    }
 	    //storage2.release();
 	 return detectedLines;
 	}

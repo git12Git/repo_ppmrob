@@ -33,6 +33,7 @@ public class AppWindows {
 	private JFrame frame;
 
 	private AutoPilot autoPilot;
+	private Thread autoPilotStarter;
 	private ARDrone arDrone;
 	private final int CONNECT_TIMEOUT = 2000;
 	private VideoPanelCustom videoPanelDrone;
@@ -209,8 +210,24 @@ public class AppWindows {
 						case KeyEvent.VK_7:
 							AppWindows.this.arDrone.selectVideoChannel(VideoChannel.HORIZONTAL_IN_VERTICAL);
 							break;
+						case KeyEvent.VK_F1:
+							AppWindows.this.autoPilotStarter.start();
+							break;
+						case KeyEvent.VK_F2:
+							AppWindows.this.autoPilotStarter.interrupt();
+							break;
 						case KeyEvent.VK_8:
-							AppWindows.this.arDrone.selectVideoChannel(VideoChannel.VERTICAL_IN_HORIZONTAL);
+							break;
+						case KeyEvent.VK_F12:
+							for(int i=0; i<6; i++){
+								AppWindows.this.arDrone.move(0.0f, 0.0f, 0.0f, angular_speed_left); //turn left
+								try {
+									Thread.sleep(200);
+								} catch (InterruptedException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+							}
 							break;
 						}
 				} catch (IOException e1) {
@@ -232,8 +249,8 @@ public class AppWindows {
                 float vertical_speed_up = 0.1f;
                 float vertical_speed_down = -0.1f;
                 
-                float angular_speed_right = 0.3f;
-                float angular_speed_left = -0.3f;
+                float angular_speed_right = 0.15f;
+                float angular_speed_left = -0.15f;
                 
 				System.out.println("released:"+e.getKeyCode());
 				int pressed = e.getKeyCode();
@@ -382,7 +399,8 @@ public class AppWindows {
 		autoPilot = new AutoPilot(this.arDrone);
 		arDrone.addNavDataListener(autoPilot);
 		this.arDrone.addNavDataListener(videoPanelDrone);
-		arDrone.addImageListener(autoPilot);
+//		arDrone.addImageListener(autoPilot);
+		this.autoPilotStarter = new Thread(autoPilot);
 		
 		this.arDrone.addStatusChangeListener(new DroneStatusChangeListener() {
 			
