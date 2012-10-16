@@ -29,6 +29,7 @@ import java.awt.event.WindowListener;
 import java.awt.event.WindowStateListener;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Timer;
 
 public class AppWindows {
 
@@ -40,6 +41,7 @@ public class AppWindows {
 	private final int CONNECT_TIMEOUT = 2000;
 	private VideoPanelCustom videoPanelDrone;
 	private NavData navDataFromDrone = new NavData();
+	public static final Integer AUTOPILOT_TASK_FREQUENCY = 1000;
 	/**
 	 * Launch the application.
 	 */
@@ -213,7 +215,8 @@ public class AppWindows {
 							AppWindows.this.arDrone.selectVideoChannel(VideoChannel.HORIZONTAL_IN_VERTICAL);
 							break;
 						case KeyEvent.VK_F1:
-							AppWindows.this.autoPilotStarter.start();
+							new Timer().schedule(autoPilot, 1000);
+							//AppWindows.this.autoPilotStarter.start();
 							break;
 						case KeyEvent.VK_F2:
 							AppWindows.this.autoPilotStarter.interrupt();
@@ -402,7 +405,7 @@ public class AppWindows {
 		arDrone.addNavDataListener(autoPilot);
 		this.arDrone.addNavDataListener(videoPanelDrone);
 //		arDrone.addImageListener(autoPilot);
-		this.autoPilotStarter = new Thread(autoPilot);
+		//this.autoPilotStarter = new Thread(autoPilot);
 		
 		this.arDrone.addStatusChangeListener(new DroneStatusChangeListener() {
 			

@@ -1,5 +1,7 @@
 package at.ppmrob.autopilot.state;
 
+import at.ppmrob.autopilot.AutoPilot;
+/*
 public enum AutoPilotState {
 	DRONE_ON_GROUND,
 	DRONE_TAKEOFF,
@@ -12,4 +14,30 @@ public enum AutoPilotState {
 	DRONE_LAND,
 	DRONE_LOST_CIRCLE,
 	DRONE_LOST_LINE
+}
+*/
+
+public abstract class AutoPilotState {
+	
+	protected AutoPilot autoPilot;
+	
+	public void ChangeState(AutoPilotState state) {
+		autoPilot.changeState(state);
+	}
+	
+	public abstract void handle();
+
+	public AutoPilotState() {
+		super();
+	}
+	
+
+	public void setAutoPilot(AutoPilot autoPilot) {
+		this.autoPilot = autoPilot;
+	}
+
+	public AutoPilot getAutoPilot() {
+		return autoPilot;
+	}
+
 }

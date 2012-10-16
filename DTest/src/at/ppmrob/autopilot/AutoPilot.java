@@ -1,6 +1,8 @@
 package at.ppmrob.autopilot;
 
 import at.ppmrob.autopilot.state.AutoPilotState;
+import at.ppmrob.autopilot.state.IStateTransition;
+import at.ppmrob.autopilot.state.OnGroundPilotState;
 import at.ppmrob.examples.main.LastKnownCircleLinePosition;
 import at.ppmrob.featuredetection.FeatureDetection;
 import at.ppmrob.featuredetection.IFeatureDetectionListener;
@@ -25,24 +27,33 @@ import java.util.TimerTask;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener, IFeatureDetectionListener {
+public class AutoPilot extends TimerTask implements DroneVideoListener, NavDataListener, IFeatureDetectionListener, IStateTransition {
 
 	private boolean runAutoPilot = true;
 	private boolean lostCircle = true;
 	private boolean lostLine = true;
-	
-	
+
+
 	private LastKnownCircleLinePosition lastKnownCircleLinePosition;
-	private long circleFoundTime;
+	//private long circleFoundTime;
 	private long circleFoundTimeDifference;
 	private long lineFoundTime;
 	private long lineFoundTimeDifferece;
-	
+
 	private Timer timerCheckCircleOrLineLost;
 	private TimerTask tt;
-	
+	private TimerTask checkCirclePosition;
+
+	public TimerTask getCheckCirclePosition() {
+		return checkCirclePosition;
+	}
+
+	public void setCheckCirclePosition(TimerTask checkCirclePosition) {
+		this.checkCirclePosition = checkCirclePosition;
+	}
+
 	private static final Integer MOVE_WAIT_TIMEOUT = 500;
-	
+
 	private ARDrone drone;
 	public static double PI = 3.14159265;
 	private AtomicReference<BufferedImage> image = new AtomicReference<BufferedImage>();
@@ -54,17 +65,18 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 	Rectangle2D.Double redZoneLeftSideRectangle = new Rectangle2D.Double(1, 1, heightDroneCamera*0.33f, widthDroneCamera-1);
 	Rectangle2D.Double greenZoneCenterRectangle = new Rectangle2D.Double(heightDroneCamera*0.33f, 1, heightDroneCamera*0.33f, widthDroneCamera-1);
 	Rectangle2D.Double redZoneRightSideRectangle = new Rectangle2D.Double(heightDroneCamera*0.66f, 1, heightDroneCamera*0.33f, widthDroneCamera-1);
-	
+
 	Rectangle2D.Double upperHalfSideRectangle = new Rectangle2D.Double(1, 1, heightDroneCamera-2, widthDroneCamera*0.5);
 	Rectangle2D.Double bottomHalfSideRectangle = new Rectangle2D.Double(1, widthDroneCamera*0.5+2, heightDroneCamera-2, widthDroneCamera*0.5f-2);
-	
-//	Rectangle2D.Double redZoneLeftSide = new Rectangle2D.Double(1, 1, widthDroneCamera*0.33f, heightDroneCamera-1);
-//	Rectangle2D.Double greenZoneCenter = new Rectangle2D.Double(widthDroneCamera*0.33f, 1, widthDroneCamera*0.33f, heightDroneCamera-1);
-//	Rectangle2D.Double redZoneRightSide = new Rectangle2D.Double(widthDroneCamera*0.66f, 1, widthDroneCamera*0.33f, heightDroneCamera-1);
-	
+
+	//	Rectangle2D.Double redZoneLeftSide = new Rectangle2D.Double(1, 1, widthDroneCamera*0.33f, heightDroneCamera-1);
+	//	Rectangle2D.Double greenZoneCenter = new Rectangle2D.Double(widthDroneCamera*0.33f, 1, widthDroneCamera*0.33f, heightDroneCamera-1);
+	//	Rectangle2D.Double redZoneRightSide = new Rectangle2D.Double(widthDroneCamera*0.66f, 1, widthDroneCamera*0.33f, heightDroneCamera-1);
+
 	private Point2D.Double averageBullseyeCenter = new Point2D.Double();
 	private Point2D.Double averageLinesCenter = new Point2D.Double();
-	
+	private CircleInformation foundCirclesInformation = new CircleInformation();
+
 	IplImage iplImg_lines;
 	IplImage iplImg_circles;
 	Vector<MyLine> detectedLines = new Vector<MyLine>();
@@ -78,44 +90,51 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 	float front_tilt = -0.1f;
 	float back_tilt = 0.1f;
 
-	
-	
-	 private NavData droneNavData = new NavData();
-	    private float droneAltitude;
-	    private float droneBattery;
-	    private float droneYaw;
-	    private String droneControlState;
-	    private String droneFlyingState;
-	    private boolean droneIsFlying;
-	    private boolean droneIsBatteryTooHigh;
-	    private boolean droneIsBatteryTooLow;
-	    private boolean droneIsEmergency;
-	
-	
+
+	private NavData droneNavData = new NavData();
+	private float droneAltitude;
+	public float getDroneAltitude() {
+		return droneAltitude;
+	}
+
+	public void setDroneAltitude(float droneAltitude) {
+		this.droneAltitude = droneAltitude;
+	}
+
+	private float droneBattery;
+	private float droneYaw;
+	private String droneControlState;
+	private String droneFlyingState;
+	private boolean droneIsFlying;
+	private boolean droneIsBatteryTooHigh;
+	private boolean droneIsBatteryTooLow;
+	private boolean droneIsEmergency;
+
+
 	@Override
 	public void navDataReceived(NavData nd) {
 		// the data here is just for drawing on screen. later we use another navdatalistener
-				synchronized (this.droneNavData) {
-					this.droneNavData=nd;
-				}
-				droneAltitude = this.droneNavData.getAltitude();
-				droneBattery = this.droneNavData.getBattery();
-				droneControlState = this.droneNavData.getControlState().name();
-				droneFlyingState = this.droneNavData.getFlyingState().name();
-				droneIsFlying = this.droneNavData.isFlying();
-				droneIsBatteryTooHigh = this.droneNavData.isBatteryTooHigh();
-				droneIsBatteryTooLow = this.droneNavData.isBatteryTooLow();
-				droneIsEmergency = this.droneNavData.isEmergency();
-				droneYaw = this.droneNavData.getYaw();
+		synchronized (this.droneNavData) {
+			this.droneNavData=nd;
+		}
+		droneAltitude = this.droneNavData.getAltitude();
+		droneBattery = this.droneNavData.getBattery();
+		droneControlState = this.droneNavData.getControlState().name();
+		droneFlyingState = this.droneNavData.getFlyingState().name();
+		droneIsFlying = this.droneNavData.isFlying();
+		droneIsBatteryTooHigh = this.droneNavData.isBatteryTooHigh();
+		droneIsBatteryTooLow = this.droneNavData.isBatteryTooLow();
+		droneIsEmergency = this.droneNavData.isEmergency();
+		droneYaw = this.droneNavData.getYaw();
 	}
 
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 	@Override
 	public void frameReceived(int startX, int startY, int w, int h,
 			int[] rgbArray, int offset, int scansize) {
@@ -138,23 +157,22 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 		}
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
 	// This method is when its NOT called by another class
 	public static void main(String[] args) {
 		ARDrone drone;
 		try {
-			// Create ARDrone object,
-			// connect to drone and initialize it.
+			// initialize autopilot
 			drone = new ARDrone();
-			AutoPilot sophisticatedpilot = new AutoPilot(drone);
-			
+			AutoPilot sophisticatedpilot = new AutoPilot(new ARDrone());
+
 			drone.connect();
 			drone.clearEmergencySignal();
 
@@ -170,20 +188,21 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 			// Turn around 360 degrees
 
 			// Follow the lines
+			// stuff moved to constructor
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
 	/**
 	 * 
 	 * 
@@ -191,51 +210,48 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 	 * 
 	 * @param drone
 	 */
-	public AutoPilot(ARDrone drone) {
+	public AutoPilot(ARDrone drone) throws IOException{
 		super();
 		this.drone = drone;
 		this.drone.addNavDataListener(this);
 		FeatureDetection.addFeatureDetectionListener(this);
-		autoPilotState = AutoPilotState.DRONE_ON_GROUND;
-		
+		changeState(new OnGroundPilotState());
+		//autoPilotState = AutoPilotState.DRONE_ON_GROUND;
+
 		this.timerCheckCircleOrLineLost = new Timer();
+		checkCirclePosition = new CheckCirclePosition(this, foundCirclesInformation);
+
 		this.tt = new TimerTask() {
-			
+
 			@Override
 			public void run() {
+
 				long timeNow = System.currentTimeMillis();
-				
-				circleFoundTimeDifference = timeNow-AutoPilot.this.circleFoundTime;
+
+		//		circleFoundTimeDifference = timeNow-AutoPilot.this.circleFoundTime;
 				lineFoundTimeDifferece = timeNow-AutoPilot.this.lineFoundTime;
-				
-				if(AutoPilot.this.autoPilotState.equals(AutoPilotState.DRONE_STAY_OVER_FINISH_CIRCLE) ||
-						AutoPilot.this.autoPilotState.equals(AutoPilotState.DRONE_STAY_OVER_STARTING_CIRCLE) ||
-						AutoPilot.this.autoPilotState.equals(AutoPilotState.DRONE_TURN_360) ||
-						AutoPilot.this.autoPilotState.equals(AutoPilotState.DRONE_IS_FLYING)){
-					
-					if(circleFoundTimeDifference>=6000){
-						AutoPilot.this.autoPilotState=AutoPilotState.DRONE_LOST_CIRCLE;
-					}
-				}
-				
+
+			
 				if(AutoPilot.this.autoPilotState.equals(AutoPilotState.DRONE_FOLLOW_LINE)){
-					
+
 					if(lineFoundTimeDifferece>=6000){
 						AutoPilot.this.autoPilotState=AutoPilotState.DRONE_LOST_LINE;
 					}
 				}
-				
+
 			}
 		};
+
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
+	public void setCircleFoundTimeDifference(long circleFoundTimeDifference) {
+		this.circleFoundTimeDifference = circleFoundTimeDifference;
+	}
+
+	public long getCircleFoundTimeDifference() {
+		return circleFoundTimeDifference;
+	}
+
 	/**
 	 * 
 	 * 
@@ -245,19 +261,13 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 	 * @param detectedCircles
 	 */
 	public void getFeatures(Vector<MyLine> detectedLines,
-					Vector<MyCircle> detectedCircles)
-		{
+			Vector<MyCircle> detectedCircles)
+	{
 		this.detectedLines = detectedLines;
 		this.detectedCircles = detectedCircles;
-		}//
-	
-	
-	
-	
-	
-	
-	
-	
+	}//
+
+
 	/**
 	 * 
 	 * 
@@ -267,24 +277,24 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 	public void moveAlongLines() {
 		try {
 
-				double averageangle = 0;
-				for (int i = 0; i < detectedLines.size(); i++) {
+			double averageangle = 0;
+			for (int i = 0; i < detectedLines.size(); i++) {
 
-					averageangle += lnangle(
-							detectedLines.elementAt(i).point1.x(),
-							detectedLines.elementAt(i).point1.y(),
-							detectedLines.elementAt(i).point2.x(),
-							detectedLines.elementAt(i).point2.y());
-				}
-				averageangle /= detectedLines.size();
-				if (averageangle > 60 && averageangle < 120)
-					drone.move(0.0f, front_tilt, 0.0f, 0.0f);
-				else if (averageangle <= 60)
-					drone.move(left_tilt, 0.0f, 0.0f, 0.0f);
-				else if (averageangle >= 120)
-					drone.move(right_tilt, 0.0f, 0.0f, 0.0f);
-				else
-					drone.land();
+				averageangle += lnangle(
+						detectedLines.elementAt(i).point1.x(),
+						detectedLines.elementAt(i).point1.y(),
+						detectedLines.elementAt(i).point2.x(),
+						detectedLines.elementAt(i).point2.y());
+			}
+			averageangle /= detectedLines.size();
+			if (averageangle > 60 && averageangle < 120)
+				drone.move(0.0f, front_tilt, 0.0f, 0.0f);
+			else if (averageangle <= 60)
+				drone.move(left_tilt, 0.0f, 0.0f, 0.0f);
+			else if (averageangle >= 120)
+				drone.move(right_tilt, 0.0f, 0.0f, 0.0f);
+			else
+				drone.land();
 
 			// Get the average of the line angles and go that way
 
@@ -295,14 +305,7 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 		}
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
+
 	/**
 	 * 
 	 * 
@@ -332,13 +335,6 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 		return angle;
 	}
 
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * 
 	 * 
@@ -350,35 +346,25 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 		double averageX = 0;
 		final int middle = 160;
 		final int threshold = 50;
-		
+
 		for (int i = 0; i < detectedLines.size(); i++) {
 
 			averageX +=
 					(detectedLines.elementAt(i).point1.x() +
-					detectedLines.elementAt(i).point2.x()) / 2;
+							detectedLines.elementAt(i).point2.x()) / 2;
 		}// for
 		averageX /= detectedLines.size();
-		
+
 		//Now decide whether to accelerate right or left or stay at place
 		try{
-		if(averageX > middle + threshold)
-			drone.move(right_tilt, 0.0f, 0.0f, 0.0f);
-		else if(averageX < middle - threshold)
-			drone.move(left_tilt, 0.0f, 0.0f, 0.0f);
+			if(averageX > middle + threshold)
+				drone.move(right_tilt, 0.0f, 0.0f, 0.0f);
+			else if(averageX < middle - threshold)
+				drone.move(left_tilt, 0.0f, 0.0f, 0.0f);
 		} catch(IOException e) {e.printStackTrace();}
-		
+
 	}// stayInMiddle
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	/**
 	 * 
 	 * @param foundCircles
@@ -388,7 +374,7 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 		int circlesCount = 0;
 		int xCoordCount = 0;
 		int yCoordCount = 0;
-		
+
 		if(foundCircles!=null){
 			circlesCount=foundCircles.size();
 			if(circlesCount>0){
@@ -397,7 +383,7 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 					yCoordCount+=circle_n.center.y();
 				}
 				averageBullseyeCenter.setLocation((xCoordCount/circlesCount), (yCoordCount/circlesCount));
-				
+
 				if(greenZoneCenterRectangle.contains(averageBullseyeCenter)){
 					if(upperHalfSideRectangle.contains(averageBullseyeCenter)){
 						this.lastKnownCircleLinePosition=LastKnownCircleLinePosition.CENTER_RECTANGLE_UPPER_HLAF;
@@ -422,42 +408,42 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 						this.lastKnownCircleLinePosition=LastKnownCircleLinePosition.RIGHT_RECTANGLE_BOTTOM_HLAF;
 					}
 				}
-				
-//				this.dronePleaseStayOver_Current_Bullseye(w, h);
-				
+
+				//				this.dronePleaseStayOver_Current_Bullseye(w, h);
+
 				System.out.println("LAST KNOWN POSITION ########"+this.lastKnownCircleLinePosition);
-				
+
 				return averageBullseyeCenter;
 			}
 		} 
-		
+
 		//TODO no circles found, drone lost, drone go home
 		averageBullseyeCenter.setLocation(0, 0);
 		return averageBullseyeCenter;
-		
-			//go back to bullseye ?!?!
-//			averageCirclesCenter.setLocation(20, 80);
-//			
-//			this.dronePleaseStayOver_Current_Bullseye(w, h);
-//			
-//			return averageCirclesCenter;
-		}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+		//go back to bullseye ?!?!
+		//			averageCirclesCenter.setLocation(20, 80);
+		//			
+		//			this.dronePleaseStayOver_Current_Bullseye(w, h);
+		//			
+		//			return averageCirclesCenter;
+	}
+
+
+
+
+
+
+
+
+
+
+
 	public synchronized Point2D.Double updateAverageCenterOfFoundLines(Vector<MyLine> foundLines){//, int w, int h) {
 		int lineCount = 0;
 		int xCoordCount = 0;
 		int yCoordCount = 0;
-		
+
 		if(foundLines!=null){
 			lineCount=foundLines.size();
 			if(lineCount>0){
@@ -466,11 +452,11 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 					xCoordCount+=line_n.point2.x();
 					yCoordCount+=line_n.point1.y();
 					yCoordCount+=line_n.point2.y();
-						
+
 				}
-				
+
 				averageLinesCenter.setLocation((xCoordCount/lineCount), (yCoordCount/lineCount));
-				
+
 				if(greenZoneCenterRectangle.contains(averageLinesCenter)){
 					if(upperHalfSideRectangle.contains(averageBullseyeCenter)){
 						this.lastKnownCircleLinePosition=LastKnownCircleLinePosition.CENTER_RECTANGLE_UPPER_HLAF;
@@ -495,37 +481,37 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 						this.lastKnownCircleLinePosition=LastKnownCircleLinePosition.RIGHT_RECTANGLE_BOTTOM_HLAF;
 					}
 				}
-				
-//				this.dronePleaseStayOver_Current_Bullseye(w, h);
-				
+
+				//				this.dronePleaseStayOver_Current_Bullseye(w, h);
+
 				return averageLinesCenter;
 			}
 		} 
-		
+
 		//TODO no circles found, drone lost, drone go home
 		averageBullseyeCenter.setLocation(0, 0);
 		return averageBullseyeCenter;
-		
-			//go back to bullseye ?!?!
-//			averageCirclesCenter.setLocation(20, 80);
-//			
-//			this.dronePleaseStayOver_Current_Bullseye(w, h);
-//			
-//			return averageCirclesCenter;
-		}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+		//go back to bullseye ?!?!
+		//			averageCirclesCenter.setLocation(20, 80);
+		//			
+		//			this.dronePleaseStayOver_Current_Bullseye(w, h);
+		//			
+		//			return averageCirclesCenter;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 	/**
 	 * 
 	 * 
@@ -533,34 +519,10 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 	 * 
 	 */
 	private void droneTurn360(){
-		try {
-			//hardcoded
-			for(int i =0; i<=300; i++){
-				this.drone.move(0.0f, 0.0f, 0.0f, -0.05f);//turn left ca.10degree ?!?!?!?!?
-				Thread.sleep(20);
-				//check every second if drone stays over the bullseye
-				if(i%2==0){
-					this.dronePleaseStayOver_Current_Bullseye();
-				}
-				
-//				if(droneYaw>-152 && droneYaw<-165){
-//					break;
-//				}
-				
-			}
-			this.drone.land();
-			this.runAutoPilot=false;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
-	
-	
-	
+
+
+
 	/**
 	 * 
 	 *      height=144                height=144                height=144                   
@@ -577,79 +539,28 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 	 * 
 	 * @param averageCircCenter
 	 */
-	private void dronePleaseStayOver_Current_Bullseye(){
-		/**
+
+	
+	/*private void dronePleaseStayOver_Current_Bullseye(){
+		*//**
 		 * ich bin nicht sicher aber ich glaube mich zu erinnern das bei der drone die width und height umkehrt
 		 * waren ??? (drone width == standard height   &   drone height == standard width)
 		 * w=176   33% = 58
 		 * h=144   33% = 47
-		 */
-		//
-		
-//		Rectangle2D.Double greenZone_bullseye = new Rectangle2D.Double(h*0.33f, w, h*0.33f, w);
-//		
-//		Rectangle2D.Double redZone_bullseye_left_side = new Rectangle2D.Double(0, w, h*0.33f, w);
-//		Rectangle2D.Double redZone_bullseye_right_side = new Rectangle2D.Double(h*0.66f, w, h*0.33f, w);
-		
+		 *//*	
 		int countMoves=0;
-		
-//		if(!greenZoneCenterRectangle.contains(averageBullseyeCenter)){
-//		    //TODO CIRCLE OUT OF SIGHT
-//			//TODO drone go backward/forward
-//
-//			while(redZoneLeftSideRectangle.contains(averageBullseyeCenter)){
-//		        // drone go right
-//				try {
-//					this.drone.move(0.1f, 0.0f, 0.0f, 0.0f);
-//					Thread.sleep(1000);
-//					countMoves++;
-//					if(countMoves>30){
-//						this.drone.land();
-//						this.runAutoPilot=false;
-//					}
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//			countMoves=0;
-//			
-//			
-//			while(redZoneRightSideRectangle.contains(averageBullseyeCenter)){
-//			   // drone go left
-//				try {
-//					this.drone.move(-0.1f, 0.0f, 0.0f, 0.0f);
-//					Thread.sleep(1000);
-//					countMoves++;
-//					if(countMoves>30){
-//						this.drone.land();
-//						this.runAutoPilot=false;
-//					}
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//			countMoves=0;
-//		}
-		
-		
+
+
 		//###################################
 		//drone don't see the bullseye - lost
 		//###################################
 		while((!greenZoneCenterRectangle.contains(averageBullseyeCenter) &&
-					!redZoneLeftSideRectangle.contains(averageBullseyeCenter) &&
-					!redZoneRightSideRectangle.contains(averageBullseyeCenter)) &&
-					!autoPilotState.equals(AutoPilotState.DRONE_FOLLOW_LINE) &&
-					(autoPilotState.equals(AutoPilotState.DRONE_STAY_OVER_STARTING_CIRCLE)) || autoPilotState.equals(AutoPilotState.DRONE_STAY_OVER_FINISH_CIRCLE)) {
-			
-			
+				!redZoneLeftSideRectangle.contains(averageBullseyeCenter) &&
+				!redZoneRightSideRectangle.contains(averageBullseyeCenter)) &&
+				!autoPilotState.equals(AutoPilotState.DRONE_FOLLOW_LINE) &&
+				(autoPilotState.equals(AutoPilotState.DRONE_STAY_OVER_STARlostTING_CIRCLE)) || autoPilotState.equals(AutoPilotState.DRONE_STAY_OVER_FINISH_CIRCLE)) {
+
+
 			if(countMoves>30){
 				try {
 					this.drone.land();
@@ -659,102 +570,102 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 				}
 				this.runAutoPilot=false;
 			}
-			
-						
-			        
-					try {
-						
-						if(lastKnownCircleLinePosition.equals(LastKnownCircleLinePosition.CENTER_RECTANGLE_UPPER_HLAF)){
-							// drone go forward
-							this.drone.move(0.0f, -0.05f, 0.0f, 0.0f);
-							
-							Thread.sleep(MOVE_WAIT_TIMEOUT);
-							countMoves++;
-							if(countMoves>30){
-								this.drone.land();
-								this.runAutoPilot=false;
-							}
-						} else if(lastKnownCircleLinePosition.equals(LastKnownCircleLinePosition.CENTER_RECTANGLE_BOTTOM_HLAF)){
-							// drone go back
-							this.drone.move(0.0f, 0.05f, 0.0f, 0.0f);
-							Thread.sleep(MOVE_WAIT_TIMEOUT);
-							countMoves++;
-							if(countMoves>30){
-								this.drone.land();
-								this.runAutoPilot=false;
-							}
-						}
-						
-						if(lastKnownCircleLinePosition.equals(LastKnownCircleLinePosition.LEFT_RECTANGLE_UPPER_HLAF)){
-							 // drone go left
-							this.drone.move(-0.05f, 0.0f, 0.0f, 0.0f);
-//							if(countMoves%2==0){
-								 // drone go forward every second move
-								this.drone.move(0.0f, -0.05f, 0.0f, 0.0f);
-//							}
-							Thread.sleep(MOVE_WAIT_TIMEOUT);
-							countMoves++;
-							if(countMoves>30){
-								this.drone.land();
-								this.runAutoPilot=false;
-							}
-						} else if(lastKnownCircleLinePosition.equals(LastKnownCircleLinePosition.LEFT_RECTANGLE_BOTTOM_HLAF)){
-							 // drone go left
-							this.drone.move(-0.05f, 0.0f, 0.0f, 0.0f);
-//							if(countMoves%2==0){
-								 // drone go back every second move
-								this.drone.move(0.0f, 0.05f, 0.0f, 0.0f);
-//							}
-							Thread.sleep(MOVE_WAIT_TIMEOUT);
-							countMoves++;
-							if(countMoves>30){
-								this.drone.land();
-								this.runAutoPilot=false;
-							}
-						}
-						
-						if(lastKnownCircleLinePosition.equals(LastKnownCircleLinePosition.RIGHT_RECTANGLE_UPPER_HLAF)){
-							 // drone go right
-							this.drone.move(0.05f, 0.0f, 0.0f, 0.0f);
-//							if(countMoves%2==0){
-								 // drone go forward every second move
-								this.drone.move(0.0f, -0.05f, 0.0f, 0.0f);
-//							}
-							Thread.sleep(MOVE_WAIT_TIMEOUT);
-							countMoves++;
-							if(countMoves>30){
-								this.drone.land();
-								this.runAutoPilot=false;
-							}
-						} else if(lastKnownCircleLinePosition.equals(LastKnownCircleLinePosition.RIGHT_RECTANGLE_BOTTOM_HLAF)){
-							 // drone go right
-							this.drone.move(0.05f, 0.0f, 0.0f, 0.0f);
-//							if(countMoves%2==0){
-								 // drone go back every second move
-								this.drone.move(0.0f, 0.05f, 0.0f, 0.0f);
-//							}
-							Thread.sleep(MOVE_WAIT_TIMEOUT);
-							countMoves++;
-							if(countMoves>30){
-								this.drone.land();
-								this.runAutoPilot=false;
-							}
-						}
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 
-			
+
+
+			try {
+
+				if(lastKnownCircleLinePosition.equals(LastKnownCircleLinePosition.CENTER_RECTANGLE_UPPER_HLAF)){
+					// drone go forward
+					this.drone.move(0.0f, -0.05f, 0.0f, 0.0f);
+
+					Thread.sleep(MOVE_WAIT_TIMEOUT);
+					countMoves++;
+					if(countMoves>30){
+						this.drone.land();
+						this.runAutoPilot=false;
+					}
+				} else if(lastKnownCircleLinePosition.equals(LastKnownCircleLinePosition.CENTER_RECTANGLE_BOTTOM_HLAF)){
+					// drone go back
+					this.drone.move(0.0f, 0.05f, 0.0f, 0.0f);
+					Thread.sleep(MOVE_WAIT_TIMEOUT);
+					countMoves++;
+					if(countMoves>30){
+						this.drone.land();
+						this.runAutoPilot=false;
+					}
+				}
+
+				if(lastKnownCircleLinePosition.equals(LastKnownCircleLinePosition.LEFT_RECTANGLE_UPPER_HLAF)){
+					// drone go left
+					this.drone.move(-0.05f, 0.0f, 0.0f, 0.0f);
+					//							if(countMoves%2==0){
+					// drone go forward every second move
+					this.drone.move(0.0f, -0.05f, 0.0f, 0.0f);
+					//							}
+					Thread.sleep(MOVE_WAIT_TIMEOUT);
+					countMoves++;
+					if(countMoves>30){
+						this.drone.land();
+						this.runAutoPilot=false;
+					}
+				} else if(lastKnownCircleLinePosition.equals(LastKnownCircleLinePosition.LEFT_RECTANGLE_BOTTOM_HLAF)){
+					// drone go left
+					this.drone.move(-0.05f, 0.0f, 0.0f, 0.0f);
+					//							if(countMoves%2==0){
+					// drone go back every second move
+					this.drone.move(0.0f, 0.05f, 0.0f, 0.0f);
+					//							}
+					Thread.sleep(MOVE_WAIT_TIMEOUT);
+					countMoves++;
+					if(countMoves>30){
+						this.drone.land();
+						this.runAutoPilot=false;
+					}
+				}
+
+				if(lastKnownCircleLinePosition.equals(LastKnownCircleLinePosition.RIGHT_RECTANGLE_UPPER_HLAF)){
+					// drone go right
+					this.drone.move(0.05f, 0.0f, 0.0f, 0.0f);
+					//							if(countMoves%2==0){
+					// drone go forward every second move
+					this.drone.move(0.0f, -0.05f, 0.0f, 0.0f);
+					//							}
+					Thread.sleep(MOVE_WAIT_TIMEOUT);
+					countMoves++;
+					if(countMoves>30){
+						this.drone.land();
+						this.runAutoPilot=false;
+					}
+				} else if(lastKnownCircleLinePosition.equals(LastKnownCircleLinePosition.RIGHT_RECTANGLE_BOTTOM_HLAF)){
+					// drone go right
+					this.drone.move(0.05f, 0.0f, 0.0f, 0.0f);
+					//							if(countMoves%2==0){
+					// drone go back every second move
+					this.drone.move(0.0f, 0.05f, 0.0f, 0.0f);
+					//							}
+					Thread.sleep(MOVE_WAIT_TIMEOUT);
+					countMoves++;
+					if(countMoves>30){
+						this.drone.land();
+						this.runAutoPilot=false;
+					}
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+
 			countMoves++;
 		}
-		
+
 	}
-	
-	
+*/
+
 	/**
 	 *      height=144                height=144                height=144                   
 	 *     33%  33%                    33%  33%                  33%  33%
@@ -778,109 +689,102 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 		 * h=144   33% = 47
 		 */
 		//
-		
+
 		boolean follow = true;
-		
+
 		while(follow){
 
-			    //TODO CIRCLE OUT OF SIGHT
-				//TODO drone go backward/forward
-				
-				int countMoves=0;
-	
-				
-				
-				while(redZoneLeftSideRectangle.contains(averageLinesCenter)){
-			        // drone go right
-					try {
-						this.drone.move(0.05f, 0.0f, 0.0f, 0.0f);
-						Thread.sleep(1000);
-						countMoves++;
-						if(countMoves>30){
-							this.drone.land();
-							this.runAutoPilot=false;
-							follow=false;
-						}
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+			//TODO CIRCLE OUT OF SIGHT
+			//TODO drone go backward/forward
+
+			int countMoves=0;
+
+
+
+			while(redZoneLeftSideRectangle.contains(averageLinesCenter)){
+				// drone go right
+				try {
+					this.drone.move(0.05f, 0.0f, 0.0f, 0.0f);
+					Thread.sleep(1000);
+					countMoves++;
+					if(countMoves>30){
+						this.drone.land();
+						this.runAutoPilot=false;
+						follow=false;
 					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				
-				
-				
-				
-				while(redZoneRightSideRectangle.contains(averageLinesCenter)){
-				   // drone go left
-					try {
-						this.drone.move(-0.05f, 0.0f, 0.0f, 0.0f);
-						Thread.sleep(1000);
-						countMoves++;
-						if(countMoves>30){
-							this.drone.land();
-							this.runAutoPilot=false;
-							follow=false;
-						}
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+			}
+
+
+
+
+			while(redZoneRightSideRectangle.contains(averageLinesCenter)){
+				// drone go left
+				try {
+					this.drone.move(-0.05f, 0.0f, 0.0f, 0.0f);
+					Thread.sleep(1000);
+					countMoves++;
+					if(countMoves>30){
+						this.drone.land();
+						this.runAutoPilot=false;
+						follow=false;
 					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				
-				
-				
-				
-				
-				while(greenZoneCenterRectangle.contains(averageLinesCenter)){
-					try {
-						this.drone.move(0.0f, 0.05f, 0.0f, 0.0f); // go forward
-						Thread.sleep(1000);
-						countMoves++;
-						if(countMoves>=8){ // the start bullseye should be invisible know
-							if(circleFoundTimeDifference<=4000){ 
-								//finish bullseye is visible
-								follow=false;
-								break;
-							}
-						}
-						if(countMoves>20){
-							this.drone.land();
-							this.runAutoPilot=false;
+			}
+
+
+
+
+
+			while(greenZoneCenterRectangle.contains(averageLinesCenter)){
+				try {
+					this.drone.move(0.0f, 0.05f, 0.0f, 0.0f); // go forward
+					Thread.sleep(1000);
+					countMoves++;
+					if(countMoves>=8){ // the start bullseye should be invisible know
+						if(circleFoundTimeDifference<=4000){ 
+							//finish bullseye is visible
 							follow=false;
+							break;
 						}
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
+					if(countMoves>20){
+						this.drone.land();
+						this.runAutoPilot=false;
+						follow=false;
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			
-			
+			}
+
+
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-		}//while(follow) loop
-	
-	}
 
-	
-	
-	
-	
-	
-	
+		}//while(follow) loop
+
+	}
 	/**
 	 * 
 	 * 
@@ -889,21 +793,10 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 	@Override
 	public void foundCircles(Vector<MyCircle> circles) {
 		// TODO Auto-generated method stub
-		this.circleFoundTime = System.currentTimeMillis();
-		synchronized (this.detectedCircles) {
-			this.detectedCircles=circles;
-			this.updateAverageCenterOfFoundCircles(circles);
-		}
-		
-	}
+		foundCirclesInformation.setCircleFoundTime(System.currentTimeMillis());
+		foundCirclesInformation.setDetectedCircles(circles);
 
-	
-	
-	
-	
-	
-	
-	
+	}	
 	/**
 	 * 
 	 * 
@@ -917,17 +810,9 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 			this.detectedLines=lines;
 			this.updateAverageCenterOfFoundLines(lines);
 		}
-		
+
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * 
 	 * 
@@ -943,9 +828,7 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 		}
 		autoPilotState=AutoPilotState.DRONE_ON_GROUND;
 	}
-	
-	
-	
+
 	/**
 	 * 
 	 * 
@@ -953,101 +836,112 @@ public class AutoPilot implements Runnable, DroneVideoListener, NavDataListener,
 	 */
 	@Override
 	public void run() {
-		
-		while(runAutoPilot){
-			
-			try {
-				//drone takeoff to 1.3+ meters
-				if(autoPilotState.equals(AutoPilotState.DRONE_ON_GROUND)){
-						this.drone.takeOff();
-						this.autoPilotState=AutoPilotState.DRONE_TAKEOFF;
-						
-						Thread.sleep(2000);
-						
-						if(this.droneIsFlying){
-							this.autoPilotState=AutoPilotState.DRONE_IS_FLYING;
-							while(this.droneAltitude <= 1.3){  // go to 1.3 meter height
-								this.drone.move(0.0f, 0.0f, 0.1f, 0.0f);
-								Thread.sleep(500);
-							}
-							this.timerCheckCircleOrLineLost.scheduleAtFixedRate(tt, 0, 2000);
-							
-						} else {  //try again if we have no luck
-							this.drone.takeOff();
-							this.autoPilotState=AutoPilotState.DRONE_IS_FLYING;
-							Thread.sleep(2000);
-							
-							while(this.droneAltitude <= 1.3){
-								this.drone.move(0.0f, 0.0f, 0.1f, 0.0f);
-								Thread.sleep(500);
-							}
-							this.timerCheckCircleOrLineLost.scheduleAtFixedRate(tt, 0, 2000);
-						}
-				}
-				
-				if(autoPilotState.equals(AutoPilotState.DRONE_IS_FLYING)){
-					autoPilotState=AutoPilotState.DRONE_STAY_OVER_STARTING_CIRCLE;
-					this.dronePleaseStayOver_Current_Bullseye();
-				}
-				if(autoPilotState.equals(AutoPilotState.DRONE_STAY_OVER_STARTING_CIRCLE)){
-					autoPilotState=AutoPilotState.DRONE_TURN_360;
-					this.droneTurn360();
-				}
-				if(autoPilotState.equals(AutoPilotState.DRONE_TURN_360)){
-					autoPilotState=AutoPilotState.DRONE_FOLLOW_LINE;
-					this.dronePleaseFollowTheLine();
-				}
-				if(autoPilotState.equals(AutoPilotState.DRONE_FOLLOW_LINE)){
-					autoPilotState=AutoPilotState.DRONE_STAY_OVER_FINISH_CIRCLE;
-					this.dronePleaseStayOver_Current_Bullseye();
-				}
-				if(autoPilotState.equals(AutoPilotState.DRONE_STAY_OVER_FINISH_CIRCLE)){
-					autoPilotState=AutoPilotState.DRONE_LAND;
-					this.drone.land();
-					this.runAutoPilot=false;
-				}
-					
-					
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
+		//while(runAutoPilot){
+
+		autoPilotState.handle();
+		try {
+
+
+			if(autoPilotState.equals(AutoPilotState.DRONE_TURN_360)){
+				autoPilotState=AutoPilotState.DRONE_FOLLOW_LINE;
+				this.dronePleaseFollowTheLine();
 			}
-			
-			
-			
-			
-			
-			
-			try {
-				Thread.sleep(250);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if(autoPilotState.equals(AutoPilotState.DRONE_FOLLOW_LINE)){
+				autoPilotState=AutoPilotState.DRONE_STAY_OVER_FINISH_CIRCLE;
+				this.dronePleaseStayOver_Current_Bullseye();
 			}
+			if(autoPilotState.equals(AutoPilotState.DRONE_STAY_OVER_FINISH_CIRCLE)){
+				autoPilotState=AutoPilotState.DRONE_LAND;
+				this.drone.land();
+				this.runAutoPilot=false;
+			}
+
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		
-		
+
+
+
+		try {
+			Thread.sleep(250);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//	}
+
+
+
 		try {
 			this.drone.land();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
+	}
+
+	@Override
+	public void changeState(AutoPilotState state) {
+		// TODO Auto-generated method stub
+		state.setAutoPilot(this);
+		this.autoPilotState = state;
+	}
+
+	public void takeOff() {
+		try {
+			drone.takeOff();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean isDroneFlying() {
+		return droneIsFlying;
+	}
+
+	public void ascendDrone(float value) throws IOException {
+		drone.move(0.0f, 0.0f, value, 0.0f);
+	}
+
+	public void turnLeft(float value) throws IOException {
+		drone.move(0.0f, 0.0f, 0.0f, -1 * value);//turn left ca.10degree ?!?!?!?!?
 	}
 	
+	public void turnRight(float value) throws IOException {
+		drone.move(0.0f, 0.0f, 0.0f, value);	
+	}
 	
+	public void goLeft(float value) throws IOException {
+		drone.move(-1 * value, 0.0f, 0.0f, 0.0f);
+	}
 	
+	public void goRight(float value) throws IOException {
+		drone.move(value, 0.0f, 0.0f, 0.0f);
+	}
 	
+	public void goForward(float value) throws IOException {
+		drone.move(0.0f, -1 * value, 0.0f, 0.0f);	
+	}
 	
+
+	public void goBack(float value) throws IOException {
+		drone.move(0.0f, value, 0.0f, 0.0f);	
+	}
 	
-	
-	
-	
-	
+	public CircleInformation getFoundCirclesInformation() {
+		return foundCirclesInformation;
+	}
+
+	public void setFoundCirclesInformation(CircleInformation foundCirclesInformation) {
+		this.foundCirclesInformation = foundCirclesInformation;
+	}
 
 }
