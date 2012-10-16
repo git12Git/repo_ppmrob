@@ -1,5 +1,7 @@
-package at.ppmrob.examples.main;
+package at.ppmrob.autopilot;
 
+import at.ppmrob.autopilot.state.AutoPilotState;
+import at.ppmrob.examples.main.LastKnownCircleLinePosition;
 import at.ppmrob.featuredetection.FeatureDetection;
 import at.ppmrob.featuredetection.IFeatureDetectionListener;
 import at.ppmrob.featuredetection.MyCircle;

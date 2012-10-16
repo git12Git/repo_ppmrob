@@ -1,4 +1,4 @@
-package at.ppmrob.examples.main;
+package at.ppmrob.autopilot.state;
 
 public enum AutoPilotState {
 	DRONE_ON_GROUND,
