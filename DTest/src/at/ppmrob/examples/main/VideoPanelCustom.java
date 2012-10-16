@@ -6,9 +6,9 @@
 
 package at.ppmrob.examples.main;
 
-import at.ppmrob.examples.FeatureDetection;
-import at.ppmrob.examples.MyCircle;
-import at.ppmrob.examples.MyLine;
+import at.ppmrob.featuredetection.FeatureDetection;
+import at.ppmrob.featuredetection.MyCircle;
+import at.ppmrob.featuredetection.MyLine;
 
 
 import com.codeminders.ardrone.ARDrone;

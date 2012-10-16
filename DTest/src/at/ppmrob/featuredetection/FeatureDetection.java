@@ -1,4 +1,4 @@
-package at.ppmrob.examples;
+package at.ppmrob.featuredetection;
 
 import static com.googlecode.javacv.cpp.opencv_core.*;
 import static com.googlecode.javacv.cpp.opencv_imgproc.*;

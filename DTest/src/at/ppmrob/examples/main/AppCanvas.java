@@ -1,9 +1,9 @@
 package at.ppmrob.examples.main;
 import java.util.Vector;
 
-import at.ppmrob.examples.FeatureDetection;
-import at.ppmrob.examples.MyCircle;
-import at.ppmrob.examples.MyLine;
+import at.ppmrob.featuredetection.FeatureDetection;
+import at.ppmrob.featuredetection.MyCircle;
+import at.ppmrob.featuredetection.MyLine;
 
 import com.googlecode.javacv.CanvasFrame;
 import com.googlecode.javacv.FrameGrabber;
