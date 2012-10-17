@@ -6,30 +6,10 @@
 
 package at.ppmrob.examples.mock;
 
-import static com.googlecode.javacv.cpp.opencv_core.CV_AA;
-import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_8U;
-import static com.googlecode.javacv.cpp.opencv_core.cvGetSeqElem;
-import static com.googlecode.javacv.cpp.opencv_core.cvLine;
-import static com.googlecode.javacv.cpp.opencv_imgproc.CV_BGR2GRAY;
-import static com.googlecode.javacv.cpp.opencv_imgproc.CV_HOUGH_PROBABILISTIC;
-import static com.googlecode.javacv.cpp.opencv_imgproc.cvCanny;
-import static com.googlecode.javacv.cpp.opencv_imgproc.cvCvtColor;
-import static com.googlecode.javacv.cpp.opencv_imgproc.cvHoughLines2;
 
 import at.ppmrob.featuredetection.FeatureDetection;
 import at.ppmrob.featuredetection.MyCircle;
 import at.ppmrob.featuredetection.MyLine;
-
-import com.codeminders.ardrone.ARDrone;
-import com.codeminders.ardrone.DroneVideoListener;
-
-import com.googlecode.javacpp.Pointer;
-import com.googlecode.javacv.FrameGrabber;
-import com.googlecode.javacv.FrameGrabber.Exception;
-import com.googlecode.javacv.cpp.opencv_core.CvMemStorage;
-import com.googlecode.javacv.cpp.opencv_core.CvPoint;
-import com.googlecode.javacv.cpp.opencv_core.CvScalar;
-import com.googlecode.javacv.cpp.opencv_core.CvSeq;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 import java.awt.Color;

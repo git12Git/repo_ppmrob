@@ -10,9 +10,7 @@ import at.ppmrob.autopilot.AutoPilot;
 import com.codeminders.ardrone.ARDrone;
 import com.codeminders.ardrone.DroneStatusChangeListener;
 import com.codeminders.ardrone.NavData;
-import com.codeminders.ardrone.NavDataListener;
 import com.codeminders.ardrone.ARDrone.VideoChannel;
-import com.codeminders.controltower.VideoPanel;
 
 import java.awt.BorderLayout;
 import javax.swing.JButton;
@@ -24,9 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowListener;
-import java.awt.event.WindowStateListener;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Timer;
@@ -163,12 +159,13 @@ public class AppWindows {
 								AppWindows.this.arDrone.land();
 								AppWindows.this.arDrone.sendEmergencySignal();
 							break;
-						case KeyEvent.VK_P:  // AutoPilot test
+		/*				case KeyEvent.VK_P:  // AutoPilot test
 							autoPilot.getFeatures(videoPanelDrone.detectedLines,
 									videoPanelDrone.detectedCircles);
 							autoPilot.moveAlongLines();
 							autoPilot.stayInMiddle();
 							break;
+		*/
 						case KeyEvent.VK_W:   // go forward
 							AppWindows.this.arDrone.move(0.0f, front_tilt, 0.0f, 0.0f);
 							break;
@@ -269,12 +266,14 @@ public class AppWindows {
 								AppWindows.this.arDrone.land();
 								AppWindows.this.arDrone.sendEmergencySignal();
 							break;
+							/*
 						case KeyEvent.VK_P:  // AutoPilot test
 							autoPilot.getFeatures(videoPanelDrone.detectedLines,
 									videoPanelDrone.detectedCircles);
 							autoPilot.moveAlongLines();
 							autoPilot.stayInMiddle();
 							break;
+							*/
 						case KeyEvent.VK_W:   // go forward
 							AppWindows.this.arDrone.move(0.0f, front_tilt, 0.0f, 0.0f);
 							break;

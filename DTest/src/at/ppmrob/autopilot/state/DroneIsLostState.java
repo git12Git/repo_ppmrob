@@ -1,6 +1,5 @@
 package at.ppmrob.autopilot.state;
 
-import at.ppmrob.autopilot.AutoPilot;
 
 public class DroneIsLostState extends AutoPilotState {
 

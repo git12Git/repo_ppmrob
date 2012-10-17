@@ -1,8 +1,6 @@
 
 package at.ppmrob.examples.mock;
 
-import java.awt.image.BufferedImage;
-
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 public interface IDroneVideoListenerMOCK

@@ -165,7 +165,7 @@ public class CircleInformation {
 	}
 	
 	public boolean isDroneOutsideRectangles() {
-		return isDroneInGreenRectangle() || isDroneInLeftRedZoneRectangle() || isDroneInRightRedZoneRectangle();
+		return !(isDroneInGreenRectangle() || isDroneInLeftRedZoneRectangle() || isDroneInRightRedZoneRectangle());
 	}
 	
 	public boolean isDroneInGreenRectangle() {

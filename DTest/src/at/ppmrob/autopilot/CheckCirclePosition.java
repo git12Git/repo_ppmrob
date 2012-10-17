@@ -1,14 +1,11 @@
 package at.ppmrob.autopilot;
 
-import java.io.IOException;
 import java.util.TimerTask;
 
 import at.ppmrob.autopilot.state.AutoPilotState;
 import at.ppmrob.autopilot.state.CircleSearchState;
 import at.ppmrob.autopilot.state.DroneIsLostState;
 import at.ppmrob.autopilot.state.IStateTransition;
-import at.ppmrob.examples.main.LastKnownCircleLinePosition;
-
 public class CheckCirclePosition extends TimerTask {
 
 	private CircleInformation circlesFoundInformation;

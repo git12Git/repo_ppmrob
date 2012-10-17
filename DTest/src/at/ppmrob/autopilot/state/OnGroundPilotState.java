@@ -1,7 +1,5 @@
 package at.ppmrob.autopilot.state;
 
-import at.ppmrob.autopilot.AutoPilot;
-
 public class OnGroundPilotState extends AutoPilotState {
 
 	private final Integer MAX_TAKEOFF_ATTEMPTS = 1;
