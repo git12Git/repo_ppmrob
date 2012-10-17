@@ -15,15 +15,12 @@ import com.codeminders.ardrone.ARDrone;
 import com.codeminders.ardrone.DroneVideoListener;
 import com.codeminders.ardrone.NavData;
 import com.codeminders.ardrone.NavDataListener;
-import com.googlecode.javacv.CanvasFrame;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -31,8 +28,6 @@ import java.awt.image.ColorConvertOp;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-
-import javax.swing.text.AttributeSet.FontAttribute;
 
 /**
  * 

@@ -1,7 +1,6 @@
 package at.ppmrob.examples.mock;
 
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -16,22 +15,9 @@ import com.codeminders.ardrone.CommandSender;
 import com.codeminders.ardrone.DroneStatusChangeListener;
 import com.codeminders.ardrone.DroneVideoListener;
 import com.codeminders.ardrone.NavData;
-import com.codeminders.ardrone.NavData.FlyingState;
 import com.codeminders.ardrone.NavDataListener;
 import com.codeminders.ardrone.NavDataReader;
 import com.codeminders.ardrone.VideoReader;
-import com.codeminders.ardrone.commands.ConfigureCommand;
-import com.codeminders.ardrone.commands.ControlCommand;
-import com.codeminders.ardrone.commands.EmergencyCommand;
-import com.codeminders.ardrone.commands.FlatTrimCommand;
-import com.codeminders.ardrone.commands.HoverCommand;
-import com.codeminders.ardrone.commands.KeepAliveCommand;
-import com.codeminders.ardrone.commands.LandCommand;
-import com.codeminders.ardrone.commands.MoveCommand;
-import com.codeminders.ardrone.commands.PlayAnimationCommand;
-import com.codeminders.ardrone.commands.PlayLEDCommand;
-import com.codeminders.ardrone.commands.QuitCommand;
-import com.codeminders.ardrone.commands.TakeOffCommand;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 public class ARDroneMOCK

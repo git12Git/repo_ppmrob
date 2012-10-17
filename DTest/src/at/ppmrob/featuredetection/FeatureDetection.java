@@ -8,8 +8,6 @@ import java.util.Vector;
 import com.googlecode.javacpp.FloatPointer;
 import com.googlecode.javacpp.Pointer;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
-import com.googlecode.javacv.cpp.opencv_stitching.ImageFeatures;
-
 
 public class FeatureDetection {
 

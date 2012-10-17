@@ -1,10 +1,8 @@
 package at.ppmrob.examples.mock;
 
-import java.awt.Frame;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
