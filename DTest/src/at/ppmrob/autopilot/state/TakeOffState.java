@@ -10,7 +10,7 @@ public class TakeOffState extends AutoPilotState {
 	private static final int CHECK_CIRCLE_INTERVAL = 500;
 
 	@Override
-	public void handle() {
+	public void internalHandling() {
 		// TODO Auto-generated method stub
 		//drone takeoff to 1.3+ meters
 
@@ -30,7 +30,7 @@ public class TakeOffState extends AutoPilotState {
 		}
 		
 		new Timer().scheduleAtFixedRate(autoPilot.getCheckCirclePosition(), 0, CHECK_CIRCLE_INTERVAL);
-		autoPilot.changeState(new TurnAroundState());
+		changeState(new TurnAroundState());
 	//	autoPilot.timerCheckCircleOrLineLost.scheduleAtFixedRate(tt, 0, CHECK_CIRCLE_INTERVAL);
 
 	}

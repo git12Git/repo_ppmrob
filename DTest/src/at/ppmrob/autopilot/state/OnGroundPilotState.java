@@ -4,8 +4,9 @@ public class OnGroundPilotState extends AutoPilotState {
 
 	private final Integer MAX_TAKEOFF_ATTEMPTS = 1;
 	private Integer currentTakeOffAttempt = 0;
+	
 	@Override
-	public void handle() {
+	protected void internalHandling() {
 		if (currentTakeOffAttempt > MAX_TAKEOFF_ATTEMPTS) {
 			//TODO ChangeState ErrorTakeoff
 			return;
@@ -15,8 +16,8 @@ public class OnGroundPilotState extends AutoPilotState {
 			currentTakeOffAttempt++;
 		}
 		else {
-			autoPilot.changeState(new TakeOffState());
+			changeState(new TakeOffState());
 		}
-		//pilot.ChangeState(new TakeOffState(pilot));
+		//pilot.ChangeState(new TakeOffState(pilot));		
 	}
 }

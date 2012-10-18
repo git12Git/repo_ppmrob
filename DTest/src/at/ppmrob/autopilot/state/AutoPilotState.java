@@ -1,5 +1,7 @@
 package at.ppmrob.autopilot.state;
 
+import org.apache.log4j.Logger;
+
 import at.ppmrob.autopilot.AutoPilot;
 /*
 public enum AutoPilotState {
@@ -20,15 +22,23 @@ public enum AutoPilotState {
 public abstract class AutoPilotState {
 	
 	protected AutoPilot autoPilot;
+	protected Logger autoPilotLogger;
 	
-	public void ChangeState(AutoPilotState state) {
+	public void changeState(AutoPilotState state) {
 		autoPilot.changeState(state);
+		autoPilotLogger.info("switching to state: " + state.getClass().getSimpleName());
 	}
+
 	
-	public abstract void handle();
+	public void handle() {
+		autoPilotLogger.info("executing handler of state: " + getClass().getSimpleName());
+		internalHandling();
+	}
+	protected abstract void internalHandling();
 
 	public AutoPilotState() {
 		super();
+		autoPilotLogger = Logger.getLogger(getClass());
 	}
 	
 

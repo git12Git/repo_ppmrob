@@ -9,7 +9,7 @@ public class FollowLineState extends AutoPilotState {
 	private int lineFollowImpulses = 0;
 
 	@Override
-	public void handle() {
+	protected void internalHandling() {
 		try {
 			CircleInformation circleInformation = autoPilot.getFoundCirclesInformation();
 			if (lineFollowImpulses++ < 8) {
@@ -24,7 +24,7 @@ public class FollowLineState extends AutoPilotState {
 
 			if(lineFollowImpulses>20){
 				// should disable autopilot
-				autoPilot.changeState(new DroneLandState());
+				changeState(new DroneLandState());
 			}
 		
 		}
@@ -32,5 +32,4 @@ public class FollowLineState extends AutoPilotState {
 			e.printStackTrace();
 		}
 	}
-
 }

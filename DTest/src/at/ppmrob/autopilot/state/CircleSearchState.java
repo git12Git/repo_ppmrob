@@ -10,7 +10,7 @@ public class CircleSearchState extends AutoPilotState {
 	private int countMoves = 0;
 
 	@Override
-	public void handle() {
+	protected void internalHandling() {
 
 		CircleInformation circlesFoundInformation = autoPilot.getFoundCirclesInformation();
 	

@@ -4,8 +4,9 @@ import at.ppmrob.autopilot.LineInformation;
 
 public class LineSearchState extends AutoPilotState {
 
+	
 	@Override
-	public void handle() {
+	public void internalHandling() {
 		// TODO Auto-generated method stub
 		
 		//LineInformation: load lineinformation from autopilot

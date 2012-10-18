@@ -7,7 +7,7 @@ public class TurnAroundState extends AutoPilotState {
 	private static final int CHECK_LINE_INTERVAL = 500;
 	private int rotationImpulses = 0;
 	@Override
-	public void handle() {
+	public void internalHandling() {
 		try {
 			//hardcoded
 			if (rotationImpulses++ < 300 ){
@@ -17,7 +17,7 @@ public class TurnAroundState extends AutoPilotState {
 			else {
 				autoPilot.getCheckCirclePosition().cancel();
 				new Timer().scheduleAtFixedRate(autoPilot.getCheckLinePosition(), 0, CHECK_LINE_INTERVAL);
-				autoPilot.changeState(new DroneLandState());
+				changeState(new DroneLandState());
 			}
 			
 		} catch (IOException e) {
