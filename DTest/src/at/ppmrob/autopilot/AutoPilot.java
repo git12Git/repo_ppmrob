@@ -42,6 +42,23 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 	// end sensordata
 
 	
+
+	/**
+	 * run()
+	 * Main control loop of autopilot
+	 * We make heavy use of the statepattern(GoF) here
+	 * Each state of the drone is represented by its own class
+	 * we always call the handle() method of our autoPilotState object
+	 * state transision is handled by the handle() method itslef and thus, the autoPilotState member variable
+	 * always represnts the current active state (in the AutoPilot class, we don't really care what state we are currently in)
+	 */
+	@Override
+	public void run() {
+		autoPilotState.handle();
+		
+	}
+
+	
 	public TimerTask getCheckCirclePosition() {
 		return checkCirclePosition;
 	}
@@ -135,12 +152,7 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 		foundLineInformation.setDetectedLines(lines);
 	}
 
-	@Override
-	public void run() {
-		autoPilotState.handle();
-		
-	}
-
+	
 	@Override
 	public void changeState(AutoPilotState state) {
 		state.setAutoPilot(this);
