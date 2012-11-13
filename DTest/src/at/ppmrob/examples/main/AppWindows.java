@@ -26,6 +26,8 @@ import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Timer;
+import javax.swing.JLabel;
+import java.awt.Font;
 
 public class AppWindows {
 
@@ -38,6 +40,11 @@ public class AppWindows {
 	private VideoPanelCustom videoPanelDrone;
 	private NavData navDataFromDrone = new NavData();
 	public static final Integer AUTOPILOT_TASK_FREQUENCY = 1000;
+	
+	//
+	private static JLabel DEBUG_jLabel_State;
+	
+	private static JLabel DEBUG_jLabelCmdToDrone;
 	/**
 	 * Launch the application.
 	 */
@@ -80,43 +87,45 @@ public class AppWindows {
 		frame.getContentPane().add(panel, BorderLayout.SOUTH);
 		initActionlistener();
 		
-		JButton btnA = new JButton("A");
+		JLabel jLabel1 = new JLabel("State:");
+		jLabel1.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		
-		JButton btnD = new JButton("D");
+		JLabel jLabel2 = new JLabel("Cmd:");
+		jLabel2.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		
-		JButton btnVv = new JButton("S");
-		btnVv.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			}
-		});
+		DEBUG_jLabel_State = new JLabel("Currently No State");
+		DEBUG_jLabel_State.setFont(new Font("Tahoma", Font.BOLD, 20));
 		
-		JButton btnNewButton = new JButton("W");
+		DEBUG_jLabelCmdToDrone = new JLabel("Sending Cmd To Drone");
+		DEBUG_jLabelCmdToDrone.setFont(new Font("Tahoma", Font.BOLD, 20));
 		
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel.createSequentialGroup()
-					.addGap(18)
-					.addComponent(btnA)
-					.addGap(18)
+					.addGap(19)
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnNewButton)
 						.addGroup(gl_panel.createSequentialGroup()
-							.addComponent(btnVv)
-							.addGap(18)
-							.addComponent(btnD)))
-					.addGap(387))
+							.addComponent(jLabel2)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(DEBUG_jLabelCmdToDrone))
+						.addGroup(gl_panel.createSequentialGroup()
+							.addComponent(jLabel1)
+							.addGap(6)
+							.addComponent(DEBUG_jLabel_State)))
+					.addGap(483))
 		);
 		gl_panel.setVerticalGroup(
 			gl_panel.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_panel.createSequentialGroup()
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-					.addComponent(btnNewButton)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnA)
-						.addComponent(btnVv)
-						.addComponent(btnD)))
+						.addComponent(jLabel1)
+						.addComponent(DEBUG_jLabel_State))
+					.addGap(11)
+					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+						.addComponent(jLabel2)
+						.addComponent(DEBUG_jLabelCmdToDrone)))
 		);
 		panel.setLayout(gl_panel);
 	}
@@ -216,7 +225,8 @@ public class AppWindows {
 							//AppWindows.this.autoPilotStarter.start();
 							break;
 						case KeyEvent.VK_F2:
-							AppWindows.this.autoPilotStarter.interrupt();
+							AppWindows.this.arDrone.land();
+							AppWindows.this.autoPilotStarter.interrupt();//??? autoPilotStarter init
 							break;
 						case KeyEvent.VK_8:
 							break;
@@ -425,5 +435,15 @@ public class AppWindows {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	
+	public static void setDEBUGStateText(String text)
+	{
+		DEBUG_jLabel_State.setText(text);
+	}
+	public static void setDEBUGCurrentCommandToDroneText(String text)
+	{
+		DEBUG_jLabelCmdToDrone.setText(text);
 	}
 }
