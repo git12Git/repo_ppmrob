@@ -11,7 +11,7 @@ public class OnGroundPilotState extends AutoPilotState {
 	@Override
 	protected void internalHandling() {
 		
-		if (currentTakeOffAttempt > MAX_TAKEOFF_ATTEMPTS) {
+/*		if (currentTakeOffAttempt > MAX_TAKEOFF_ATTEMPTS) {
 			AppWindows.setDEBUGStateText("starting failed, shutting down");
 			//TODO ChangeState ErrorTakeoff
 			return;
@@ -32,5 +32,9 @@ public class OnGroundPilotState extends AutoPilotState {
 			changeState(new TakeOffState());
 		}
 		//pilot.ChangeState(new TakeOffState(pilot));		
+		
+		 */
+		AppWindows.setDEBUGStateText("change to take OFF");
+		changeState(new TakeOffState());
 	}
 }

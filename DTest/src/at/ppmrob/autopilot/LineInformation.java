@@ -113,7 +113,7 @@ public class LineInformation {
 	
 
 	public boolean isDroneLost() {
-		return (getLineFoundTime() >= LAST_LINE_FOUND_TIMEOUT);
+		return (getLineFoundTimeDifference() >= LAST_LINE_FOUND_TIMEOUT);
 	}
 
 	public boolean isDroneInGreenRectangle() {

@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Vector;
 
+import at.ppmrob.examples.main.AppWindows;
 import at.ppmrob.examples.main.LastKnownCircleLinePosition;
 import at.ppmrob.featuredetection.MyCircle;
 
@@ -152,6 +153,7 @@ public class CircleInformation {
 		super();
 		detectedCircles = new Vector<MyCircle>();
 		averageBullsEyeCenter = new Point2D.Double();
+		circleFoundTime = System.currentTimeMillis();
 	}
 
 	public long getCircleFoundTimeDifference() {
@@ -163,7 +165,7 @@ public class CircleInformation {
 	}
 
 	public boolean isDroneLost() {
-		return (getCircleFoundTime() >= LAST_CIRCLE_FOUND_TIMEOUT);
+		return (getCircleFoundTimeDifference() >= LAST_CIRCLE_FOUND_TIMEOUT);
 	}
 	
 	public boolean isDroneOutsideRectangles() {

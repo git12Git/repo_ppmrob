@@ -26,7 +26,7 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 	private ARDrone drone;
 	public static double PI = 3.14159265;
 
-	FeatureDetection featureDetection = new FeatureDetection();
+	FeatureDetection featureDetection = FeatureDetection.getInstance();
 	AutoPilotState autoPilotState;
 	private CircleInformation foundCirclesInformation = new CircleInformation();
 	private LineInformation foundLineInformation = new LineInformation();
@@ -59,7 +59,6 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 	int loopcounter = 0;
 	@Override
 	public void run() {		
-		AppWindows.setDEBUGStateText("running the control loop " + loopcounter++ );
 		autoPilotState.handle();
 	}
 
@@ -127,10 +126,10 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 		super();
 		this.drone = drone;
 		this.drone.addNavDataListener(this);
+		changeState(new OnGroundPilotState());
 		checkCirclePosition = new CheckCirclePosition(this, foundCirclesInformation);
 		checkLinePosition = new CheckLinePosition(this, foundLineInformation);
 		FeatureDetection.addFeatureDetectionListener(this);
-		changeState(new OnGroundPilotState());
 		//AppWindows.setDEBUGStateText("On Ground");
 	}
 
@@ -179,8 +178,8 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 	
 	@Override
 	public void changeState(AutoPilotState state) {
-		AppWindows.setDEBUGStateText(state.getClass().getSimpleName());
-//	pushAutoPilotInformation(new AutoPilotInformation("switching to state: " + state.getClass().getSimpleName()));
+//		AppWindows.setDEBUGStateText(state.getClass().getSimpleName());
+		pushAutoPilotInformation(new AutoPilotInformation("switching to state: " + state.getClass().getSimpleName()));
 //		
 		state.setAutoPilot(this);
 		this.autoPilotState = state;

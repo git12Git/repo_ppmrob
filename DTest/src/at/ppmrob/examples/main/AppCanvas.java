@@ -29,7 +29,7 @@ public class AppCanvas {
       
      FrameGrabber grabber = new OpenCVFrameGrabber("video/320x240_at_15fps.mp4"); 
 
-     FeatureDetection fd = new FeatureDetection();
+     FeatureDetection fd =  FeatureDetection.getInstance();
      try {     
        
       grabber.start();     

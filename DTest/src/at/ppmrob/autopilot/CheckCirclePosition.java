@@ -6,6 +6,7 @@ import at.ppmrob.autopilot.state.AutoPilotState;
 import at.ppmrob.autopilot.state.CircleSearchState;
 import at.ppmrob.autopilot.state.DroneIsLostState;
 import at.ppmrob.autopilot.state.IStateTransition;
+import at.ppmrob.examples.main.AppWindows;
 public class CheckCirclePosition extends TimerTask {
 
 	private CircleInformation circlesFoundInformation;
@@ -16,18 +17,28 @@ public class CheckCirclePosition extends TimerTask {
 		super();
 		this.circlesFoundInformation = circlesFoundInformation;
 		this.stateUpdate = stateUpdate;
+		previousState = stateUpdate.getCurrentState();
 	}
 	@Override
 	public void run() {
 		
 		long timeNow = System.currentTimeMillis();
+		
 		circlesFoundInformation.setCircleFoundTimeDifference(timeNow-circlesFoundInformation.getCircleFoundTime());
+		AppWindows.setDEBUGCurrentCommandToDroneText(new Long(circlesFoundInformation.getCircleFoundTimeDifference()).toString());
 		if (circlesFoundInformation.isDroneLost()) {
-			stateUpdate.changeState(new DroneIsLostState());
+			if (previousState != stateUpdate.getCurrentState()) {
+				stateUpdate.changeState(new DroneIsLostState());
+				previousState = stateUpdate.getCurrentState();
+			}
 		} 
-		if(circlesFoundInformation.isDroneOutsideRectangles()) {
-			previousState = stateUpdate.getCurrentState();
-			stateUpdate.changeState(new CircleSearchState());
+		else if(circlesFoundInformation.isDroneOutsideRectangles()) {
+			if (previousState != stateUpdate.getCurrentState()) {
+				AppWindows.setDEBUGCurrentCommandToDroneText("store previous state: " + previousState.getClass().getSimpleName());
+				stateUpdate.changeState(new CircleSearchState());
+				previousState = stateUpdate.getCurrentState();
+			}
+			
 		}
 		else {
 			stateUpdate.changeState(previousState);

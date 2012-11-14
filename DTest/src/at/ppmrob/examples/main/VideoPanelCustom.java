@@ -53,7 +53,7 @@ public class VideoPanelCustom extends javax.swing.JPanel implements DroneVideoLi
     private boolean droneIsEmergency;
     Font font = new Font(Font.SANS_SERIF, Font.BOLD, 12);
     
-    FeatureDetection featureDetection = new FeatureDetection();
+    FeatureDetection featureDetection = FeatureDetection.getInstance();
     
     
     

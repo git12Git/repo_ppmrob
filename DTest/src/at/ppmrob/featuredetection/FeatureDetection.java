@@ -16,13 +16,19 @@ public class FeatureDetection {
 	private static Vector<IFeatureDetectionListener> listeners;
 //	CvMemStorage storage;
 //	CvMemStorage storage2;
-	public FeatureDetection ()
+	private static FeatureDetection featureDetection;
+	private FeatureDetection ()
 	{
 		listeners = new Vector<IFeatureDetectionListener>();
 //		storage2 = CvMemStorage.create();
 //		storage = CvMemStorage.create();
 	}// FeatureDetection
-	
+	public static FeatureDetection getInstance(){
+		if(featureDetection==null){
+			featureDetection = new FeatureDetection();
+		}
+		return featureDetection;
+	}
 	
 	public void initWidthAndHeight(int imgWidth, int imgHeight){
 //		this.imgWidth=imgHeight;
@@ -78,8 +84,10 @@ public class FeatureDetection {
 //                cvCircle(im, new CvPoint(x,y), 3, cvScalar(0, 255, 0, 0)/*CV_RGB(100, 0, 0)*/, -1, 8, 0);
 //                cvCircle(im, new CvPoint(x,y), radius, cvScalar(0, 255, 0, 0)/*CV_RGB(100, 0, 0)*/, 1, 8, 0);
         }
-        for(IFeatureDetectionListener ifdl:listeners){
-        	ifdl.foundCircles(detectedCircles);
+        if(circles.total()>0){
+        	for(IFeatureDetectionListener ifdl:listeners){
+        		ifdl.foundCircles(detectedCircles);
+        	}
         }
 		return detectedCircles;
 	}
@@ -143,9 +151,11 @@ public class FeatureDetection {
 //	    	cvLine(im, new CvPoint(line).position(0), 
 //	        		new CvPoint(line).position(1), CvScalar.BLUE, 2, CV_AA, 0);
 	    }
-	    for(IFeatureDetectionListener ifdl:listeners){
-	    	ifdl.foundLines(detectedLines);
-	    }
+	    if(lines.total()>0){
+	    	for(IFeatureDetectionListener ifdl:listeners){
+	    		ifdl.foundLines(detectedLines);
+	    	}
+	}
 	    //storage2.release();
 	 return detectedLines;
 	}

@@ -18,25 +18,30 @@ public class TakeOffState extends AutoPilotState {
 		//drone takeoff to 1.3+ meters
 
 		//this.autoPilotState=AutoPilotState.DRONE_IS_FLYING;
-		
+
 		if (!circlePositionCheckScheduled) {
 			new Timer().schedule(autoPilot.getCheckCirclePosition(), 0, CHECK_CIRCLE_INTERVAL);
 		}
-			while(autoPilot.getDroneAltitude() <= OPERATING_HEIGHT){  // go to 1.3 meter height
-			AppWindows.setDEBUGStateText("Take OFF");
+		while(autoPilot.getDroneAltitude() <= OPERATING_HEIGHT){  // go to 1.3 meter height
+			//	AppWindows.setDEBUGStateText("Take OFF");
 			try {
-				autoPilot.ascendDrone(ASCEND_STEP_SIZE);
-			} catch (IOException e) {
+				//	autoPilot.ascendDrone(ASCEND_STEP_SIZE);
+				Thread.sleep(500);
+			} //catch (IOException e) {
+			// TODO Auto-generated catch block
+			//	e.printStackTrace();
+			//	}
+			catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 
 		}
-		
-		
+
+
 		changeState(new TurnAroundState());
-	//	autoPilot.timerCheckCircleOrLineLost.scheduleAtFixedRate(tt, 0, CHECK_CIRCLE_INTERVAL);
+		//	autoPilot.timerCheckCircleOrLineLost.scheduleAtFixedRate(tt, 0, CHECK_CIRCLE_INTERVAL);
 
 	}
 }

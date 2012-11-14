@@ -35,7 +35,7 @@ public class VideoPanelForMOCK extends javax.swing.JPanel implements IDroneVideo
     private AtomicBoolean                  preserveAspect = new AtomicBoolean(true);
     private BufferedImage                  noConnection   = new BufferedImage(320,240, BufferedImage.TYPE_INT_RGB);//320, 240, BufferedImage.TYPE_INT_RGB);
 
-    private FeatureDetection featureDetection = new FeatureDetection();
+    private FeatureDetection featureDetection = FeatureDetection.getInstance();
     /** Creates new form VideoPanel */
     public VideoPanelForMOCK()
     {
