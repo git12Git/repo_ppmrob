@@ -129,7 +129,7 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 		changeState(new OnGroundPilotState());
 		checkCirclePosition = new CheckCirclePosition(this, foundCirclesInformation);
 		checkLinePosition = new CheckLinePosition(this, foundLineInformation);
-		FeatureDetection.addFeatureDetectionListener(this);
+		featureDetection.addFeatureDetectionListener(this);
 		//AppWindows.setDEBUGStateText("On Ground");
 	}
 
