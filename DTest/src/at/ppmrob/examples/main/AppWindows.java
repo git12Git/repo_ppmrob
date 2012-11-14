@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import at.ppmrob.autopilot.AutoPilot;
+import at.ppmrob.autopilot.AutoPilotInformation;
 
 import com.codeminders.ardrone.ARDrone;
 import com.codeminders.ardrone.DroneStatusChangeListener;
@@ -27,7 +28,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Timer;
 
-public class AppWindows {
+public class AppWindows implements IAutoPilotDataInformationListener {
 
 	private JFrame frame;
 
@@ -406,6 +407,7 @@ public class AppWindows {
 //		arDrone.addImageListener(autoPilot);
 		//this.autoPilotStarter = new Thread(autoPilot);
 		
+		
 		this.arDrone.addStatusChangeListener(new DroneStatusChangeListener() {
 			
 			@Override
@@ -425,5 +427,10 @@ public class AppWindows {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void pushAutoPilotInformation(AutoPilotInformation data) {
+		//TODO add textfield for status information
 	}
 }

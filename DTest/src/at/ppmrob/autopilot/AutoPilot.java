@@ -3,6 +3,7 @@ package at.ppmrob.autopilot;
 import at.ppmrob.autopilot.state.AutoPilotState;
 import at.ppmrob.autopilot.state.IStateTransition;
 import at.ppmrob.autopilot.state.OnGroundPilotState;
+import at.ppmrob.examples.main.IAutoPilotDataInformationListener;
 import at.ppmrob.featuredetection.FeatureDetection;
 import at.ppmrob.featuredetection.IFeatureDetectionListener;
 import at.ppmrob.featuredetection.MyCircle;
@@ -12,6 +13,7 @@ import com.codeminders.ardrone.ARDrone;
 import com.codeminders.ardrone.NavData;
 import com.codeminders.ardrone.NavDataListener;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.Vector;
 
@@ -39,6 +41,7 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 	private boolean droneIsBatteryTooHigh;
 	private boolean droneIsBatteryTooLow;
 	private boolean droneIsEmergency;
+	private ArrayList<IAutoPilotDataInformationListener> updateListener = new ArrayList<IAutoPilotDataInformationListener>();
 	// end sensordata
 
 	
@@ -155,6 +158,10 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 	
 	@Override
 	public void changeState(AutoPilotState state) {
+		for (IAutoPilotDataInformationListener currentListener : updateListener) {
+			currentListener.pushAutoPilotInformation(
+					new AutoPilotInformation("switching to state: " + state.getClass().getSimpleName()));
+		}
 		state.setAutoPilot(this);
 		this.autoPilotState = state;
 	}
@@ -222,6 +229,10 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 	@Override
 	public AutoPilotState getCurrentState() {
 		return autoPilotState;
+	}
+	
+	public void addAutoPilotDataInformationListener(IAutoPilotDataInformationListener listener) {
+		updateListener.add(listener);
 	}
 	
 	/** @Deprecated

@@ -7,6 +7,7 @@ public class OnGroundPilotState extends AutoPilotState {
 	
 	@Override
 	protected void internalHandling() {
+		
 		if (currentTakeOffAttempt > MAX_TAKEOFF_ATTEMPTS) {
 			//TODO ChangeState ErrorTakeoff
 			return;
