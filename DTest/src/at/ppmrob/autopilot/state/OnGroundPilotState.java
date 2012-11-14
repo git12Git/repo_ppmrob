@@ -15,6 +15,12 @@ public class OnGroundPilotState extends AutoPilotState {
 		if (!autoPilot.isDroneFlying()) {
 			autoPilot.takeOff();
 			currentTakeOffAttempt++;
+			try { //weil takeoff dauert 3-4 sekunden
+				Thread.sleep(3000); //+1000 vom timer
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		else {
 			changeState(new TakeOffState());

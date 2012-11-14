@@ -3,6 +3,7 @@ package at.ppmrob.autopilot;
 import at.ppmrob.autopilot.state.AutoPilotState;
 import at.ppmrob.autopilot.state.IStateTransition;
 import at.ppmrob.autopilot.state.OnGroundPilotState;
+import at.ppmrob.examples.main.AppWindows;
 import at.ppmrob.examples.main.IAutoPilotDataInformationListener;
 import at.ppmrob.featuredetection.FeatureDetection;
 import at.ppmrob.featuredetection.IFeatureDetectionListener;
@@ -56,9 +57,8 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 	 * always represnts the current active state (in the AutoPilot class, we don't really care what state we are currently in)
 	 */
 	@Override
-	public void run() {
+	public void run() {		
 		autoPilotState.handle();
-		
 	}
 
 	
@@ -66,6 +66,7 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 		return checkCirclePosition;
 	}
 
+	//Wer sollte die aufrufen - sonst ist checkCirclePosition null
 	public void setCheckCirclePosition(TimerTask checkCirclePosition) {
 		this.checkCirclePosition = checkCirclePosition;
 	}
@@ -75,6 +76,7 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 		return checkLinePosition;
 	}
 
+	//Wer sollte die aufrufen - sonst ist checkLinePosition null
 	public void setCheckLinePosition(TimerTask checkLinePosition) {
 		this.checkLinePosition = checkLinePosition;
 	}
@@ -111,6 +113,7 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 		this.drone.addNavDataListener(this);
 		FeatureDetection.addFeatureDetectionListener(this);
 		changeState(new OnGroundPilotState());
+		//AppWindows.setDEBUGStateText("On Ground");
 	}
 
 	public void setCircleFoundTimeDifference(long circleFoundTimeDifference) {
@@ -180,31 +183,38 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 	}
 
 	public void ascendDrone(float value) throws IOException {
+		AppWindows.setDEBUGCurrentCommandToDroneText("Drone go UP");
 		drone.move(0.0f, 0.0f, value, 0.0f);
 	}
 
 	public void turnLeft(float value) throws IOException {
+		AppWindows.setDEBUGCurrentCommandToDroneText("Turn Left");
 		drone.move(0.0f, 0.0f, 0.0f, -1 * value);//turn left ca.10degree ?!?!?!?!?
 	}
 	
 	public void turnRight(float value) throws IOException {
+		AppWindows.setDEBUGCurrentCommandToDroneText("Turn Right");
 		drone.move(0.0f, 0.0f, 0.0f, value);	
 	}
 	
 	public void goLeft(float value) throws IOException {
+		AppWindows.setDEBUGCurrentCommandToDroneText("Go Left");
 		drone.move(-1 * value, 0.0f, 0.0f, 0.0f);
 	}
 	
 	public void goRight(float value) throws IOException {
+		AppWindows.setDEBUGCurrentCommandToDroneText("Go Right");
 		drone.move(value, 0.0f, 0.0f, 0.0f);
 	}
 	
 	public void goForward(float value) throws IOException {
+		AppWindows.setDEBUGCurrentCommandToDroneText("Go Forward");
 		drone.move(0.0f, -1 * value, 0.0f, 0.0f);	
 	}
 	
 
 	public void goBack(float value) throws IOException {
+		AppWindows.setDEBUGCurrentCommandToDroneText("Go Back");
 		drone.move(0.0f, value, 0.0f, 0.0f);	
 	}
 	
