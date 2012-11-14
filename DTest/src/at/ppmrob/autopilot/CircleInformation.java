@@ -28,6 +28,7 @@ public class CircleInformation {
 
 
 	private Rectangle2D.Double redZoneLeftSideRectangle = new Rectangle2D.Double(1, 1, heightDroneCamera*0.33f, widthDroneCamera-1);
+	
 	public Rectangle2D.Double getRedZoneLeftSideRectangle() {
 		return redZoneLeftSideRectangle;
 	}
@@ -149,6 +150,7 @@ public class CircleInformation {
 
 	public CircleInformation() {
 		super();
+		detectedCircles = new Vector<MyCircle>();
 		averageBullsEyeCenter = new Point2D.Double();
 	}
 

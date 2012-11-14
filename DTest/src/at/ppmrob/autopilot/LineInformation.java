@@ -29,6 +29,11 @@ public class LineInformation {
 
 	private Rectangle2D.Double redZoneLeftSideRectangle = new Rectangle2D.Double(1, 1, heightDroneCamera*0.33f, widthDroneCamera-1);
 	
+	public LineInformation() {
+		detectedLines = new Vector<MyLine>();
+		averageLinesCenter = new Point2D.Double();
+	}
+	
 	public Vector<MyLine> getDetectedLines() {
 		return detectedLines;
 	}
