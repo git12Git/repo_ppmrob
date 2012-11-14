@@ -222,7 +222,9 @@ public class AppWindows implements IAutoPilotDataInformationListener {
 							AppWindows.this.arDrone.selectVideoChannel(VideoChannel.HORIZONTAL_IN_VERTICAL);
 							break;
 						case KeyEvent.VK_F1:
-							new Timer().schedule(autoPilot, 1000);
+							Timer pilotTimer = new Timer();
+							pilotTimer.schedule(autoPilot,0, 1000);
+							
 							//AppWindows.this.autoPilotStarter.start();
 							break;
 						case KeyEvent.VK_F2:
@@ -417,7 +419,7 @@ public class AppWindows implements IAutoPilotDataInformationListener {
 //		arDrone.addImageListener(autoPilot);
 		//this.autoPilotStarter = new Thread(autoPilot);
 		
-		
+		this.autoPilot.addAutoPilotDataInformationListener(this);
 		this.arDrone.addStatusChangeListener(new DroneStatusChangeListener() {
 			
 			@Override

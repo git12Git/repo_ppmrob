@@ -56,12 +56,28 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 	 * state transision is handled by the handle() method itslef and thus, the autoPilotState member variable
 	 * always represnts the current active state (in the AutoPilot class, we don't really care what state we are currently in)
 	 */
+	int loopcounter = 0;
 	@Override
 	public void run() {		
+		AppWindows.setDEBUGStateText("running the control loop " + loopcounter++ );
 		autoPilotState.handle();
 	}
 
 	
+	
+	public ArrayList<IAutoPilotDataInformationListener> getUpdateListener() {
+		return updateListener;
+	}
+
+
+
+	public void setUpdateListener(
+			ArrayList<IAutoPilotDataInformationListener> updateListener) {
+		this.updateListener = updateListener;
+	}
+
+
+
 	public TimerTask getCheckCirclePosition() {
 		return checkCirclePosition;
 	}
@@ -163,12 +179,17 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 	
 	@Override
 	public void changeState(AutoPilotState state) {
-		for (IAutoPilotDataInformationListener currentListener : updateListener) {
-			currentListener.pushAutoPilotInformation(
-					new AutoPilotInformation("switching to state: " + state.getClass().getSimpleName()));
-		}
+		AppWindows.setDEBUGStateText(state.getClass().getSimpleName());
+//	pushAutoPilotInformation(new AutoPilotInformation("switching to state: " + state.getClass().getSimpleName()));
+//		
 		state.setAutoPilot(this);
 		this.autoPilotState = state;
+	}
+	
+	public void pushAutoPilotInformation(AutoPilotInformation information) {
+		for (IAutoPilotDataInformationListener currentListener : updateListener) {
+			currentListener.pushAutoPilotInformation(information);
+		}
 	}
 
 	public void takeOff() {
