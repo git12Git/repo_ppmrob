@@ -7,8 +7,8 @@ import at.ppmrob.examples.main.AppWindows;
 
 public class TakeOffState extends AutoPilotState {
 
-	private static final float ASCEND_STEP_SIZE = 0.05f;
-	private static final double OPERATING_HEIGHT = 0.8;
+	private static final float ASCEND_STEP_SIZE = 0.1f;
+	private static final double OPERATING_HEIGHT = 1.0;
 	private static final int CHECK_CIRCLE_INTERVAL = 500;
 	private boolean circlePositionCheckScheduled = false;
 
@@ -20,17 +20,18 @@ public class TakeOffState extends AutoPilotState {
 		//this.autoPilotState=AutoPilotState.DRONE_IS_FLYING;
 
 		if (!circlePositionCheckScheduled) {
+			circlePositionCheckScheduled = true;
 			new Timer().schedule(autoPilot.getCheckCirclePosition(), 0, CHECK_CIRCLE_INTERVAL);
 		}
 		while(autoPilot.getDroneAltitude() <= OPERATING_HEIGHT){  // go to 1.3 meter height
-			//	AppWindows.setDEBUGStateText("Take OFF");
+				//AppWindows.setDEBUGStateText("Take OFF");
 			try {
-				//	autoPilot.ascendDrone(ASCEND_STEP_SIZE);
-				Thread.sleep(500);
-			} //catch (IOException e) {
+				autoPilot.ascendDrone(ASCEND_STEP_SIZE);
+				Thread.sleep(150);
+			}catch (IOException e) {
 			// TODO Auto-generated catch block
-			//	e.printStackTrace();
-			//	}
+				e.printStackTrace();
+			}
 			catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -38,9 +39,10 @@ public class TakeOffState extends AutoPilotState {
 
 
 		}
-
-
-		changeState(new TurnAroundState());
+		
+		if (autoPilot.getDroneAltitude() > OPERATING_HEIGHT) {
+			changeState(new TurnAroundState());
+		}
 		//	autoPilot.timerCheckCircleOrLineLost.scheduleAtFixedRate(tt, 0, CHECK_CIRCLE_INTERVAL);
 
 	}

@@ -223,7 +223,7 @@ public class AppWindows implements IAutoPilotDataInformationListener {
 							break;
 						case KeyEvent.VK_F1:
 							Timer pilotTimer = new Timer();
-							pilotTimer.schedule(autoPilot,0, 1000);
+							pilotTimer.schedule(autoPilot,0, 200);
 							
 							//AppWindows.this.autoPilotStarter.start();
 							break;

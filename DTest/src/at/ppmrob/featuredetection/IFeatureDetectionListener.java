@@ -13,4 +13,5 @@ public interface IFeatureDetectionListener {
 	
 	public void foundCircles(Vector<MyCircle> circles);
 	public void foundLines(Vector<MyLine> lines);
+	public void noCirclesFound();
 }

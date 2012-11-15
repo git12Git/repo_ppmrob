@@ -10,7 +10,7 @@ import at.ppmrob.featuredetection.MyCircle;
 
 public class CircleInformation {
 
-	private static final Long LAST_CIRCLE_FOUND_TIMEOUT = 6000l;
+	private static final Long LAST_CIRCLE_FOUND_TIMEOUT = 10000l;
 
 	private long circleFoundTime;
 	private long circleFoundTimeDifference;
@@ -182,5 +182,15 @@ public class CircleInformation {
 	public boolean isDroneInRightRedZoneRectangle() {
 		return redZoneRightSideRectangle.contains(averageBullsEyeCenter);
 	}
+
+	public Point2D.Double getAverageBullsEyeCenter() {
+		return averageBullsEyeCenter;
+	}
+
+	public void setAverageBullsEyeCenter(Double x, Double y) {
+		this.averageBullsEyeCenter = new Point2D.Double(x,y);
+	}
+	
+	
 
 }

@@ -167,6 +167,7 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 	public void foundCircles(Vector<MyCircle> circles) {
 		foundCirclesInformation.setCircleFoundTime(System.currentTimeMillis());
 		foundCirclesInformation.setDetectedCircles(circles);
+	
 	}	
 
 	@Override
@@ -240,6 +241,10 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 		drone.move(0.0f, value, 0.0f, 0.0f);	
 	}
 	
+	public void landDrone() throws IOException {
+		drone.land();
+	}
+	
 	public CircleInformation getFoundCirclesInformation() {
 		return foundCirclesInformation;
 	}
@@ -265,6 +270,13 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 	
 	public void addAutoPilotDataInformationListener(IAutoPilotDataInformationListener listener) {
 		updateListener.add(listener);
+	}
+
+
+
+	@Override
+	public void noCirclesFound() {
+		foundCirclesInformation.setAverageBullsEyeCenter(0.0, 0.0);		
 	}
 	
 	/** @Deprecated

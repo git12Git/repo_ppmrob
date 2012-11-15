@@ -8,6 +8,7 @@ import at.ppmrob.examples.main.LastKnownCircleLinePosition;
 public class CircleSearchState extends AutoPilotState {
 
 	private int countMoves = 0;
+	private final float CORRECTION_IMPULSE = 0.05f;
 
 	@Override
 	protected void internalHandling() {
@@ -18,37 +19,69 @@ public class CircleSearchState extends AutoPilotState {
 		
 		try {
 			if (lastKnownPosition.equals(LastKnownCircleLinePosition.CENTER_RECTANGLE_UPPER_HLAF)) {
-				autoPilot.goForward(0.05f);
+				autoPilot.goForward(CORRECTION_IMPULSE);
+//				Thread.sleep(200);
+//				autoPilot.goForward(CORRECTION_IMPULSE);
+//				Thread.sleep(200);
+//				autoPilot.goForward(CORRECTION_IMPULSE);
 				countMoves++;
 			}
 			else if (lastKnownPosition.equals(LastKnownCircleLinePosition.CENTER_RECTANGLE_BOTTOM_HLAF)) {
-				autoPilot.goBack(0.05f);
+				autoPilot.goBack(CORRECTION_IMPULSE);
+//				Thread.sleep(200);
+//				autoPilot.goBack(CORRECTION_IMPULSE);
+//				Thread.sleep(200);
+//				autoPilot.goBack(CORRECTION_IMPULSE);
 				countMoves++;
 			}
 			else if (lastKnownPosition.equals(LastKnownCircleLinePosition.LEFT_RECTANGLE_UPPER_HLAF)) {
-				autoPilot.goLeft(0.05f);
-				autoPilot.goForward(0.05f);
+				autoPilot.goLeft(CORRECTION_IMPULSE);
+				autoPilot.goForward(CORRECTION_IMPULSE);
+//				Thread.sleep(200);
+//				autoPilot.goLeft(CORRECTION_IMPULSE);
+//				autoPilot.goForward(CORRECTION_IMPULSE);
+//				Thread.sleep(200);
+//				autoPilot.goLeft(CORRECTION_IMPULSE);
+//				autoPilot.goForward(CORRECTION_IMPULSE);
 				countMoves++;
 			}
 			else if (lastKnownPosition.equals(LastKnownCircleLinePosition.LEFT_RECTANGLE_BOTTOM_HLAF)) {
-				autoPilot.goLeft(0.05f);
-				autoPilot.goBack(0.05f);
+				autoPilot.goLeft(CORRECTION_IMPULSE);
+				autoPilot.goBack(CORRECTION_IMPULSE);
+//				Thread.sleep(200);
+//				autoPilot.goLeft(CORRECTION_IMPULSE);
+//				autoPilot.goBack(CORRECTION_IMPULSE);
+//				Thread.sleep(200);
+//				autoPilot.goLeft(CORRECTION_IMPULSE);
+//				autoPilot.goBack(CORRECTION_IMPULSE);
 				countMoves++;
+				
 			}
 			else if (lastKnownPosition.equals(LastKnownCircleLinePosition.RIGHT_RECTANGLE_UPPER_HLAF)) {
-				autoPilot.goRight(0.05f);
-				autoPilot.goForward(0.05f);
-
+				autoPilot.goRight(CORRECTION_IMPULSE);
+				autoPilot.goForward(CORRECTION_IMPULSE);
+//				Thread.sleep(200);
+//				autoPilot.goRight(CORRECTION_IMPULSE);
+//				autoPilot.goForward(CORRECTION_IMPULSE);
+//				Thread.sleep(200);
+//				autoPilot.goRight(CORRECTION_IMPULSE);
+//				autoPilot.goForward(CORRECTION_IMPULSE);
 			}
 			else if (lastKnownPosition.equals(LastKnownCircleLinePosition.RIGHT_RECTANGLE_BOTTOM_HLAF)) {
-				autoPilot.goRight(0.05f);
-				autoPilot.goBack(0.05f);
+				autoPilot.goRight(CORRECTION_IMPULSE);
+				autoPilot.goBack(CORRECTION_IMPULSE);
+//				Thread.sleep(200);
+//				autoPilot.goRight(CORRECTION_IMPULSE);
+//				autoPilot.goBack(CORRECTION_IMPULSE);
+//				Thread.sleep(200);
+//				autoPilot.goRight(CORRECTION_IMPULSE);
+//				autoPilot.goBack(CORRECTION_IMPULSE);
 			}
 		
 		}
 		catch (IOException e) {
 			e.printStackTrace();
-		}
+		} 
 
 		countMoves++;
 

@@ -66,7 +66,7 @@ public class FeatureDetection {
 
 	    CvMemStorage storage = CvMemStorage.create();
 
-	    CvSeq circles = cvHoughCircles(grayImgCircles, storage, CV_HOUGH_GRADIENT, 1, 7, 100, 70, 0, 0);
+	    CvSeq circles = cvHoughCircles(grayImgCircles, storage, CV_HOUGH_GRADIENT, 1, 2, 100, 50, 0, 0);
 
 //	    storage.release();
 	    
@@ -87,6 +87,11 @@ public class FeatureDetection {
         if(circles.total()>0){
         	for(IFeatureDetectionListener ifdl:listeners){
         		ifdl.foundCircles(detectedCircles);
+        	}
+        }
+        else {
+        	for(IFeatureDetectionListener ifdl:listeners){
+        		ifdl.noCirclesFound();
         	}
         }
 		return detectedCircles;
