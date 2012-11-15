@@ -13,7 +13,7 @@ public class FeatureDetection {
 
 	private int height2 = 240; //240 144
 	private int width2 = 320; //320 176
-	private static Vector<IFeatureDetectionListener> listeners;
+	private Vector<IFeatureDetectionListener> listeners;
 //	CvMemStorage storage;
 //	CvMemStorage storage2;
 	private static FeatureDetection featureDetection;
@@ -36,7 +36,7 @@ public class FeatureDetection {
 	}
 	
 	
-	public static void addFeatureDetectionListener(IFeatureDetectionListener ifdl){
+	public void addFeatureDetectionListener(IFeatureDetectionListener ifdl){
 		listeners.add(ifdl);
 	}
 	/**
