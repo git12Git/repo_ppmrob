@@ -16,21 +16,21 @@ public class OnGroundPilotState extends AutoPilotState {
 			//TODO ChangeState ErrorTakeoff
 			return;
 		}
-//		if (!autoPilot.isDroneFlying()) {
-//			//AppWindows.setDEBUGCurrentCommandToDroneText("drone starting");
-//			autoPilot.takeOff();
-//			currentTakeOffAttempt++;
-//			try { //weil takeoff dauert 3-4 sekunden
-//				Thread.sleep(3000); //+1000 vom timer
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//		else {
+		if (!autoPilot.isDroneFlying()) {
+			//AppWindows.setDEBUGCurrentCommandToDroneText("drone starting");
+			autoPilot.takeOff();
+			currentTakeOffAttempt++;
+			try { //weil takeoff dauert 3-4 sekunden
+				Thread.sleep(3000); //+1000 vom timer
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else {
 			AppWindows.setDEBUGStateText("change to take OFF");
 			changeState(new TakeOffState());
-//		}
+		}
 		
 	//autoPilot.changeState(new TakeOffState());		
 		
