@@ -9,9 +9,9 @@ import at.ppmrob.examples.main.LastKnownCircleLinePosition;
 import at.ppmrob.featuredetection.MyCircle;
 
 public class CircleInformation {
-	
+
 	private static final Long LAST_CIRCLE_FOUND_TIMEOUT = 6000l;
-	
+
 	private long circleFoundTime;
 	private long circleFoundTimeDifference;
 	private Vector<MyCircle> detectedCircles;
@@ -29,7 +29,7 @@ public class CircleInformation {
 
 
 	private Rectangle2D.Double redZoneLeftSideRectangle = new Rectangle2D.Double(1, 1, heightDroneCamera*0.33f, widthDroneCamera-1);
-	
+
 	public Rectangle2D.Double getRedZoneLeftSideRectangle() {
 		return redZoneLeftSideRectangle;
 	}
@@ -97,46 +97,45 @@ public class CircleInformation {
 			this.detectedCircles = detectedCircles;
 			if(detectedCircles!=null){
 				circlesCount=detectedCircles.size();
-				if(circlesCount>0){
-					for(MyCircle circle_n:detectedCircles){
-						xCoordCount+=circle_n.center.x();
-						yCoordCount+=circle_n.center.y();
-					}
-					averageBullsEyeCenter.setLocation((xCoordCount/circlesCount), (yCoordCount/circlesCount));
-
-					if(greenZoneCenterRectangle.contains(averageBullsEyeCenter)){
-						if(upperHalfSideRectangle.contains(averageBullsEyeCenter)){
-							this.lastKnownCirclePosition=LastKnownCircleLinePosition.CENTER_RECTANGLE_UPPER_HLAF;
-						}
-						if(bottomHalfSideRectangle.contains(averageBullsEyeCenter)){
-							this.lastKnownCirclePosition=LastKnownCircleLinePosition.CENTER_RECTANGLE_BOTTOM_HLAF;
-						}
-					}
-					if(redZoneLeftSideRectangle.contains(averageBullsEyeCenter)){
-						if(upperHalfSideRectangle.contains(averageBullsEyeCenter)){
-							this.lastKnownCirclePosition=LastKnownCircleLinePosition.LEFT_RECTANGLE_UPPER_HLAF;
-						}
-						if(bottomHalfSideRectangle.contains(averageBullsEyeCenter)){
-							this.lastKnownCirclePosition=LastKnownCircleLinePosition.LEFT_RECTANGLE_BOTTOM_HLAF;
-						}
-					}
-					if(redZoneRightSideRectangle.contains(averageBullsEyeCenter)){
-						if(upperHalfSideRectangle.contains(averageBullsEyeCenter)){
-							this.lastKnownCirclePosition=LastKnownCircleLinePosition.RIGHT_RECTANGLE_UPPER_HLAF;
-						}
-						if(bottomHalfSideRectangle.contains(averageBullsEyeCenter)){
-							this.lastKnownCirclePosition=LastKnownCircleLinePosition.RIGHT_RECTANGLE_BOTTOM_HLAF;
-						}
-					}
-
-					//				this.dronePleaseStayOver_Current_Bullseye(w, h);
-
-					System.out.println("LAST KNOWN POSITION ########"+this.lastKnownCirclePosition);
+				for(MyCircle circle_n:detectedCircles){
+					xCoordCount+=circle_n.center.x();
+					yCoordCount+=circle_n.center.y();
 				}
+				averageBullsEyeCenter.setLocation((xCoordCount/circlesCount), (yCoordCount/circlesCount));
+
+				if(greenZoneCenterRectangle.contains(averageBullsEyeCenter)){
+					if(upperHalfSideRectangle.contains(averageBullsEyeCenter)){
+						this.lastKnownCirclePosition=LastKnownCircleLinePosition.CENTER_RECTANGLE_UPPER_HLAF;
+					}
+					if(bottomHalfSideRectangle.contains(averageBullsEyeCenter)){
+						this.lastKnownCirclePosition=LastKnownCircleLinePosition.CENTER_RECTANGLE_BOTTOM_HLAF;
+					}
+				}
+				if(redZoneLeftSideRectangle.contains(averageBullsEyeCenter)){
+					if(upperHalfSideRectangle.contains(averageBullsEyeCenter)){
+						this.lastKnownCirclePosition=LastKnownCircleLinePosition.LEFT_RECTANGLE_UPPER_HLAF;
+					}
+					if(bottomHalfSideRectangle.contains(averageBullsEyeCenter)){
+						this.lastKnownCirclePosition=LastKnownCircleLinePosition.LEFT_RECTANGLE_BOTTOM_HLAF;
+					}
+				}
+				if(redZoneRightSideRectangle.contains(averageBullsEyeCenter)){
+					if(upperHalfSideRectangle.contains(averageBullsEyeCenter)){
+						this.lastKnownCirclePosition=LastKnownCircleLinePosition.RIGHT_RECTANGLE_UPPER_HLAF;
+					}
+					if(bottomHalfSideRectangle.contains(averageBullsEyeCenter)){
+						this.lastKnownCirclePosition=LastKnownCircleLinePosition.RIGHT_RECTANGLE_BOTTOM_HLAF;
+					}
+				}
+
+				//				this.dronePleaseStayOver_Current_Bullseye(w, h);
+
+				System.out.println("LAST KNOWN POSITION ########"+this.lastKnownCirclePosition);
+
 			} 
 
-			//TODO no circles found, drone lost, drone go home
-			averageBullsEyeCenter.setLocation(0, 0);
+			// not needed anymore, this method doesn't get executed if no circles are found
+			//averageBullsEyeCenter.setLocation(0, 0);
 		}
 	}
 
@@ -167,19 +166,19 @@ public class CircleInformation {
 	public boolean isDroneLost() {
 		return (getCircleFoundTimeDifference() >= LAST_CIRCLE_FOUND_TIMEOUT);
 	}
-	
+
 	public boolean isDroneOutsideRectangles() {
 		return !(isDroneInGreenRectangle() || isDroneInLeftRedZoneRectangle() || isDroneInRightRedZoneRectangle());
 	}
-	
+
 	public boolean isDroneInGreenRectangle() {
 		return greenZoneCenterRectangle.contains(averageBullsEyeCenter);
 	}
-	
+
 	public boolean isDroneInLeftRedZoneRectangle() {
 		return redZoneLeftSideRectangle.contains(averageBullsEyeCenter);
 	}
-	
+
 	public boolean isDroneInRightRedZoneRectangle() {
 		return redZoneRightSideRectangle.contains(averageBullsEyeCenter);
 	}
