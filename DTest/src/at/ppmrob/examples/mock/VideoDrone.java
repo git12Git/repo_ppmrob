@@ -2,6 +2,7 @@ package at.ppmrob.examples.mock;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Random;
 import java.util.Vector;
 
 import com.codeminders.ardrone.ARDrone;
@@ -25,9 +26,10 @@ public class VideoDrone extends ARDrone{
 	private FrameGrabber grabber = new OpenCVFrameGrabber("video/v1.mp4"); 
 	private IplImage img;
 	private NavDataMOCK navData = new NavDataMOCK();
+	private Random random;
 	
 	public VideoDrone() throws UnknownHostException {
-		
+		this.random= new Random();
 	}
 	
 	
@@ -174,7 +176,11 @@ public class VideoDrone extends ARDrone{
 
 	@Override
 	public void move(float left_right_tilt, float front_back_tilt,
-			float vertical_speed, float angular_speed) throws IOException {}
+			float vertical_speed, float angular_speed) throws IOException {
+		if(vertical_speed>0.0){
+			this.navData.setDroneAltitude(this.navData.getAltitude()+Float.valueOf(this.random.nextInt(10))*0.01f);
+		}
+	}
 
 
 
