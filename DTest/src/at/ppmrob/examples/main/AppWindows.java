@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 
 import at.ppmrob.autopilot.AutoPilot;
 import at.ppmrob.autopilot.AutoPilotInformation;
+import at.ppmrob.examples.mock.VideoDrone;
 
 import com.codeminders.ardrone.ARDrone;
 import com.codeminders.ardrone.DroneStatusChangeListener;
@@ -390,7 +391,7 @@ public class AppWindows implements IAutoPilotDataInformationListener {
 	
 	public void initDrone(){
 		try {
-		this.arDrone = new ARDrone();
+		this.arDrone = new VideoDrone();//ARDrone();
 		this.arDrone.connect();
 		this.arDrone.clearEmergencySignal();
         // Wait until drone is ready
