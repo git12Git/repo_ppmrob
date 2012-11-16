@@ -24,9 +24,10 @@ public class VideoDrone extends ARDrone{
 	private Vector<NavDataListener> navDataListeners = new Vector<NavDataListener>();
 	private FrameGrabber grabber = new OpenCVFrameGrabber("video/320x240_at_15fps.mp4"); 
 	private IplImage img;
-	private NavData navData = new NavData();
+	private NavDataMOCK navData = new NavDataMOCK();
 	
 	public VideoDrone() throws UnknownHostException {
+		
 	}
 	
 	
@@ -114,6 +115,9 @@ public class VideoDrone extends ARDrone{
 						for(DroneVideoListener d:videoListeners){
 							d.frameReceived(0, 0, img.width(), img.height(), 
 									img.getBufferedImage().getRGB(0, 0, img.width(), img.height(), null, 0, img.width()), 0, img.width());
+						}
+						for(NavDataListener n:navDataListeners){
+							n.navDataReceived(navData);
 						}
 						Thread.sleep(70);
 					}
@@ -243,7 +247,10 @@ public class VideoDrone extends ARDrone{
 
 
 	@Override
-	public void takeOff() throws IOException {}
+	public void takeOff() throws IOException {
+		this.navData.setDroneIsFlying(true);
+		this.navData.setDroneAltitude(0.56f);
+	}
 
 
 
