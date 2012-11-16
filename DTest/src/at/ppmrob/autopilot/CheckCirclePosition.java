@@ -8,6 +8,7 @@ import at.ppmrob.autopilot.state.AutoPilotState;
 import at.ppmrob.autopilot.state.CircleSearchState;
 import at.ppmrob.autopilot.state.DroneIsLostState;
 import at.ppmrob.autopilot.state.IStateTransition;
+import at.ppmrob.autopilot.state.OnGroundPilotState;
 import at.ppmrob.examples.main.AppWindows;
 public class CheckCirclePosition extends TimerTask {
 
@@ -46,6 +47,7 @@ public class CheckCirclePosition extends TimerTask {
 		
 		if (!(circlesFoundInformation.isDroneOutsideRectangles() || circlesFoundInformation.isDroneLost() || restoreState == stateUpdate.getCurrentState()))
 		{
+			if(!(restoreState instanceof OnGroundPilotState))
 			stateUpdate.changeState(restoreState);
 		}
 		

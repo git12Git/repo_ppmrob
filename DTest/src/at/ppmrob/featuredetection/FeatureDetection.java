@@ -70,7 +70,6 @@ public class FeatureDetection {
 
 //	    storage.release();
 	    
-	    System.out.println("circles detected: " + circles.total());
         for (int i = 0; i < circles.total(); i++) {
 
           FloatPointer fPoint = new FloatPointer(cvGetSeqElem(circles, i));
@@ -146,13 +145,11 @@ public class FeatureDetection {
 //	    cvCvtColor(imCanny, grayImgCanny, CV_BGR2GRAY);
 
 	    CvSeq lines = cvHoughLines2( imCanny, storage2, CV_HOUGH_PROBABILISTIC, 1, 3.1415926/180, 50, 80, 10 );
-	    System.out.println("lines detected: "+lines.total());
 	    for(int i = 0; i < lines.total(); i++ )
 	    {
 	    	Pointer line = cvGetSeqElem(lines, i);
 	    	detectedLines.add(new MyLine(new CvPoint(line).position(0), new CvPoint(line).position(1)));
 	    	MyLine myLine = new MyLine(new CvPoint(line).position(0), new CvPoint(line).position(1));
-	    	System.out.println("x1:"+myLine.point1.x()+"y1:"+myLine.point1.y()+"__x2:"+myLine.point2.x()+"y2:"+myLine.point2.y());
 //	    	cvLine(im, new CvPoint(line).position(0), 
 //	        		new CvPoint(line).position(1), CvScalar.BLUE, 2, CV_AA, 0);
 	    }

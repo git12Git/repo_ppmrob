@@ -23,22 +23,33 @@ public class TakeOffState extends AutoPilotState {
 			circlePositionCheckScheduled = true;
 			new Timer().schedule(autoPilot.getCheckCirclePosition(), 0, CHECK_CIRCLE_INTERVAL);
 		}
-		while(autoPilot.getDroneAltitude() <= OPERATING_HEIGHT){  // go to 1.3 meter height
-				//AppWindows.setDEBUGStateText("Take OFF");
+		
+		if(autoPilot.getDroneAltitude() <= OPERATING_HEIGHT && !(autoPilot.getCurrentState() instanceof CircleSearchState)){
 			try {
 				autoPilot.ascendDrone(ASCEND_STEP_SIZE);
-				Thread.sleep(150);
-			}catch (IOException e) {
-			// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch (InterruptedException e) {
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-
 		}
+		
+//		schleife wurde jede 500ms aufgerufen. jetzt mit 200ms. deshalb die verzogerung
+//		while(autoPilot.getDroneAltitude() <= OPERATING_HEIGHT){  // go to 1.3 meter height
+//				//AppWindows.setDEBUGStateText("Take OFF");
+//			try {
+//				autoPilot.ascendDrone(ASCEND_STEP_SIZE);
+//				Thread.sleep(150);
+//			}catch (IOException e) {
+//			// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//
+//
+//		}
 		
 		if (autoPilot.getDroneAltitude() > OPERATING_HEIGHT) {
 			changeState(new TurnAroundState());

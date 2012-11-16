@@ -179,8 +179,8 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 	
 	@Override
 	public void changeState(AutoPilotState state) {
-//		AppWindows.setDEBUGStateText(state.getClass().getSimpleName());
-		pushAutoPilotInformation(new AutoPilotInformation("switching to state: " + state.getClass().getSimpleName()));
+		AppWindows.setDEBUGStateText(state.getClass().getSimpleName());
+//		pushAutoPilotInformation(new AutoPilotInformation("switching to state: " + state.getClass().getSimpleName()));
 //		
 		state.setAutoPilot(this);
 		this.autoPilotState = state;
