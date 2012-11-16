@@ -22,7 +22,7 @@ public class VideoDrone extends ARDrone{
 
 	private Vector<DroneVideoListener> videoListeners = new Vector<DroneVideoListener>();
 	private Vector<NavDataListener> navDataListeners = new Vector<NavDataListener>();
-	private FrameGrabber grabber = new OpenCVFrameGrabber("video/320x240_at_15fps.mp4"); 
+	private FrameGrabber grabber = new OpenCVFrameGrabber("video/v1.mp4"); 
 	private IplImage img;
 	private NavDataMOCK navData = new NavDataMOCK();
 	

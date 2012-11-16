@@ -19,8 +19,8 @@ public class CircleInformation {
 
 	private LastKnownCircleLinePosition lastKnownCirclePosition;
 
-	private int heightDroneCamera = 240;//144;<-drone original //240 144
-	private int widthDroneCamera = 320;//176;<-drone original //320 176
+	private int heightDroneCamera = 144;//<-drone original //240 144
+	private int widthDroneCamera = 176;//<-drone original //320 176
 	private Rectangle2D.Double greenZoneCenterRectangle = new Rectangle2D.Double(heightDroneCamera*0.33f, 1, heightDroneCamera*0.33f, widthDroneCamera-1);
 	private Rectangle2D.Double redZoneRightSideRectangle = new Rectangle2D.Double(heightDroneCamera*0.66f, 1, heightDroneCamera*0.33f, widthDroneCamera-1);
 
