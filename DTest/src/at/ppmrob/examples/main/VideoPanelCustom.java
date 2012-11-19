@@ -170,11 +170,17 @@ public class VideoPanelCustom extends javax.swing.JPanel implements DroneVideoLi
         	
         	iplImg_lines = IplImage.createFrom(im);
         	detectedLines = featureDetection.detectLines(iplImg_lines, w, h);
-        	imgWithLines = featureDetection.drawLines(iplImg_lines, detectedLines);
+        	detectedCircles = featureDetection.detectCircles(iplImg_lines, w, h);
+        	
+//        	imgWithLines = featureDetection.drawLines(iplImg_lines, detectedLines);
 
 //        	iplImg_circles = IplImage.createFrom(imgCircles);
-        	detectedCircles = featureDetection.detectCircles(imgWithLines, w, h);
-        	imgWithCircles = featureDetection.drawCircles(imgWithLines, detectedCircles);
+        	
+        	imgWithCircles = featureDetection.drawCircles(iplImg_lines, detectedCircles);
+        	
+        	Vector<MyLine> avgLine = new Vector<MyLine>();
+        	avgLine.add(featureDetection.getAvgLine());
+        	imgWithLines = featureDetection.drawLines(imgWithCircles, avgLine);
         	
         	 g2d.drawImage(imgWithCircles.getBufferedImage(), xPos, yPos, width, height, null);	
         	

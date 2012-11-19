@@ -23,7 +23,7 @@ public class VideoDrone extends ARDrone{
 
 	private Vector<DroneVideoListener> videoListeners = new Vector<DroneVideoListener>();
 	private Vector<NavDataListener> navDataListeners = new Vector<NavDataListener>();
-	private FrameGrabber grabber = new OpenCVFrameGrabber("video/v1.mp4"); 
+	private FrameGrabber grabber = new OpenCVFrameGrabber("video/v9.mp4"); 
 	private IplImage img;
 	private NavDataMOCK navData = new NavDataMOCK();
 	private Random random;
@@ -121,7 +121,7 @@ public class VideoDrone extends ARDrone{
 						for(NavDataListener n:navDataListeners){
 							n.navDataReceived(navData);
 						}
-						Thread.sleep(70);
+						Thread.sleep(60);
 					}
 //					grabber.stop();
 				} catch (Exception e) {

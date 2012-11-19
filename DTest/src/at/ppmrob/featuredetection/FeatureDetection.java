@@ -17,6 +17,9 @@ public class FeatureDetection {
 //	CvMemStorage storage;
 //	CvMemStorage storage2;
 	private static FeatureDetection featureDetection;
+	
+	private MyLine avgLine;
+	
 	private FeatureDetection ()
 	{
 		listeners = new Vector<IFeatureDetectionListener>();
@@ -70,6 +73,7 @@ public class FeatureDetection {
 
 //	    storage.release();
 	    
+	  
         for (int i = 0; i < circles.total(); i++) {
 
           FloatPointer fPoint = new FloatPointer(cvGetSeqElem(circles, i));
@@ -144,7 +148,12 @@ public class FeatureDetection {
 	    cvCanny(grayImgLines, imCanny, 50, 200, 3);
 //	    cvCvtColor(imCanny, grayImgCanny, CV_BGR2GRAY);
 
-	    CvSeq lines = cvHoughLines2( imCanny, storage2, CV_HOUGH_PROBABILISTIC, 1, 3.1415926/180, 50, 80, 10 );
+	    CvSeq lines = cvHoughLines2( imCanny, storage2, CV_HOUGH_PROBABILISTIC, 1, 3.1415926/180, 50, 80, 50 );
+	  
+	    int x1=0;
+	    int y1=0;
+	    int x2=0;
+	    int y2=0;
 	    for(int i = 0; i < lines.total(); i++ )
 	    {
 	    	Pointer line = cvGetSeqElem(lines, i);
@@ -152,10 +161,22 @@ public class FeatureDetection {
 	    	MyLine myLine = new MyLine(new CvPoint(line).position(0), new CvPoint(line).position(1));
 //	    	cvLine(im, new CvPoint(line).position(0), 
 //	        		new CvPoint(line).position(1), CvScalar.BLUE, 2, CV_AA, 0);
+	    	x1+=myLine.point1.x();
+	    	y1+=myLine.point1.y();
+	    	x2+=myLine.point2.x();
+	    	y2+=myLine.point2.y();
 	    }
+	    
+	    
 	    if(lines.total()>0){
+	    	x1=x1/lines.total();
+		    y1=y1/lines.total();
+		    x2=x2/lines.total();
+		    y2=y2/lines.total();
+		    avgLine =  new MyLine(new CvPoint().put(x1, y1), new CvPoint().put(x2, y2));
+		    
 	    	for(IFeatureDetectionListener ifdl:listeners){
-	    		ifdl.foundLines(detectedLines);
+	    		ifdl.foundLines(detectedLines, avgLine);
 	    	}
 	}
 	    //storage2.release();
@@ -195,12 +216,21 @@ public class FeatureDetection {
 	 * @return
 	 */
 	public synchronized IplImage drawLines(IplImage img, Vector<MyLine> detectedlines){
-		 
-		for(int i = 0; i < detectedlines.size(); i++ )
-		    {
-		    	cvLine(img, detectedlines.get(i).point1, 
-		        		detectedlines.get(i).point2, CvScalar.RED, 1, CV_AA, 0);
-		    }
+//		 DEBUG_JFrame.setLblNewLabel_5("Lines det: "+detectedlines.size());
+//		for(int i = 0; i < detectedlines.size(); i++ )
+//		    {
+//		    	cvLine(img, detectedlines.get(i).point1, 
+//		        		detectedlines.get(i).point2, CvScalar.RED, 1, CV_AA, 0);
+//		    }
+		for(MyLine l:detectedlines)
+	    {
+	    	cvLine(img, l.point1, l.point2, CvScalar.RED, 1, CV_AA, 0);
+	    	cvCircle(img, l.point1, 3, CvScalar.RED/*CV_RGB(100, 0, 0)*/, -1, 5, 0);
+	    	cvCircle(img, l.point2, 3, CvScalar.YELLOW/*CV_RGB(100, 0, 0)*/, -1, 5, 0);
+	    }
 		return img;
+	}
+	public MyLine getAvgLine() {
+		return avgLine;
 	}
 }

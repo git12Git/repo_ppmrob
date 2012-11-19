@@ -7,20 +7,25 @@ public class TurnAroundState extends AutoPilotState {
 	private static final int CHECK_LINE_INTERVAL = 500;
 	private final float ROATION_IMPULSE = 0.05f; 
 	private int rotationImpulses = 0;
+	boolean timerStarted = false;
 	@Override
 	public void internalHandling() {
 		System.err.println("WARGL WE ARE IN TURN AROUND");
 		try {
 			//hardcoded
-			if (rotationImpulses++ < 600 ){
+			if (rotationImpulses++ < 70){//70 ){
 				autoPilot.turnLeft(ROATION_IMPULSE);
 			}
 			// we will stop at this point
 			else {
-				autoPilot.getCheckCirclePosition().cancel();
-				new Timer().scheduleAtFixedRate(autoPilot.getCheckLinePosition(), 0, CHECK_LINE_INTERVAL);
-				//changeState(new DroneLandState());
-				changeState(new DroneIsLostState());
+				if(!timerStarted) {
+					autoPilot.getCheckCirclePosition().cancel();
+//					new Timer().scheduleAtFixedRate(autoPilot.getCheckLinePosition(), 0, CHECK_LINE_INTERVAL);
+//					new Timer().schedule(autoPilot.getCheckLinePosition(), 0, CHECK_LINE_INTERVAL);
+					//changeState(new DroneLandState());
+					changeState(new FollowLineState());
+					timerStarted=true;
+				}
 			}
 			
 		} catch (IOException e) {

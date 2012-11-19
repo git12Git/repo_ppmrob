@@ -1,30 +1,62 @@
 package at.ppmrob.autopilot.state;
 
+import java.io.IOException;
+
+import at.ppmrob.autopilot.CircleInformation;
 import at.ppmrob.autopilot.LineInformation;
+import at.ppmrob.examples.main.LastKnownCircleLinePosition;
 
 public class LineSearchState extends AutoPilotState {
 
-	
+	private final float CORRECTION_IMPULSE = 0.05f;
+	int counter =0;
+		
 	@Override
 	public void internalHandling() {
 		// TODO Auto-generated method stub
+		LineInformation lineInformation = autoPilot.getFoundLineInformation();
+		LastKnownCircleLinePosition lastPosLine = lineInformation.getLastKnownLinePosition();
 		
-		//LineInformation: load lineinformation from autopilot
-		// store last known position
+		CircleInformation circlesFoundInformation = autoPilot.getFoundCirclesInformation();
+		LastKnownCircleLinePosition lastPosCircle = circlesFoundInformation.getLastKnownCirclePosition();
 		
-		// if drone in left redzone 
-		// move left
-		// inc. movecount
-		
-		// if drone in right rectangle
-		// move right
-		// inc. movecount
-		
-		LineInformation linesFoundInformation = autoPilot.getFoundLineInformation();
-//		LastKnownCircleLinePosition lastKnownPosition = linesFoundInformation.get
-		
-		// TODO similar to circlesearchstate
-
+		counter++;
+		try{
+			if(lastPosLine.equals(LastKnownCircleLinePosition.CENTER_UP_AND_BOTTOM)){
+				autoPilot.goForward(CORRECTION_IMPULSE);
+			}
+			if(lastPosLine.equals(LastKnownCircleLinePosition.RIGHT_UP_AND_BOTTOM)){
+				autoPilot.goForward(CORRECTION_IMPULSE);
+			}
+			if(lastPosLine.equals(LastKnownCircleLinePosition.LEFT_UP_AND_BOTTOM)){
+				autoPilot.goForward(CORRECTION_IMPULSE);
+			}
+			if(lastPosLine.equals(LastKnownCircleLinePosition.RIGHT_UP_AND_CENTER_OR_LEFT)){
+				if(counter%4==0){
+					autoPilot.goRight(CORRECTION_IMPULSE);
+				} else {
+					autoPilot.turnRight(CORRECTION_IMPULSE);
+				}
+			}
+			if(lastPosLine.equals(LastKnownCircleLinePosition.LEFT_UP_AND_CENTER_OR_RIGHT)){
+				if(counter%4==0){
+					autoPilot.goLeft(CORRECTION_IMPULSE);
+				} else {
+					autoPilot.turnLeft(CORRECTION_IMPULSE);
+				}
+			}
+			if(lastPosLine.equals(LastKnownCircleLinePosition.CENTER_UP_AND_RIGHT_BOTTOM)){
+				autoPilot.turnLeft(CORRECTION_IMPULSE);
+			}
+			if(lastPosLine.equals(LastKnownCircleLinePosition.CENTER_UP_AND_LEFT_BOTTOM)){
+				autoPilot.turnRight(CORRECTION_IMPULSE);
+			}
+//			if(counter%5==0){
+//				autoPilot.goForward(CORRECTION_IMPULSE);
+//			}
+		}catch (IOException x){
+			x.printStackTrace();
+		}
 
 	}
 

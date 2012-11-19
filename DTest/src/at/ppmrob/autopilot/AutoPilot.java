@@ -128,7 +128,7 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 		this.drone.addNavDataListener(this);
 		changeState(new OnGroundPilotState());
 		checkCirclePosition = new CheckCirclePosition(this, foundCirclesInformation);
-		checkLinePosition = new CheckLinePosition(this, foundLineInformation);
+		checkLinePosition = new CheckLinePosition(this, foundLineInformation, foundCirclesInformation);
 		featureDetection.addFeatureDetectionListener(this);
 		//AppWindows.setDEBUGStateText("On Ground");
 	}
@@ -171,9 +171,12 @@ public class AutoPilot extends TimerTask implements NavDataListener, IFeatureDet
 	}	
 
 	@Override
-	public void foundLines(Vector<MyLine> lines) {
+	public void foundLines(Vector<MyLine> lines, MyLine avg) {
 		foundLineInformation.setLineFoundTime(System.currentTimeMillis());
 		foundLineInformation.setDetectedLines(lines);
+//		Vector<MyLine> v = new Vector<MyLine>();
+//		v.add(avg);
+//		foundLineInformation.setDetectedLineAvg(v);
 	}
 
 	

@@ -12,6 +12,6 @@ import java.util.Vector;
 public interface IFeatureDetectionListener {
 	
 	public void foundCircles(Vector<MyCircle> circles);
-	public void foundLines(Vector<MyLine> lines);
+	public void foundLines(Vector<MyLine> lines, MyLine avg);
 	public void noCirclesFound();
 }
