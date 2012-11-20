@@ -35,8 +35,11 @@ public class CircleSearchState extends AutoPilotState {
 				countMoves++;
 			}
 			else if (lastKnownPosition.equals(LastKnownCircleLinePosition.LEFT_RECTANGLE_UPPER_HLAF)) {
-				autoPilot.goLeft(CORRECTION_IMPULSE);
-				autoPilot.goForward(CORRECTION_IMPULSE);
+				if(countMoves%2==0){
+					autoPilot.goLeft(CORRECTION_IMPULSE);
+				} else {
+					autoPilot.goForward(CORRECTION_IMPULSE);
+				}
 //				Thread.sleep(200);
 //				autoPilot.goLeft(CORRECTION_IMPULSE);
 //				autoPilot.goForward(CORRECTION_IMPULSE);
@@ -45,9 +48,12 @@ public class CircleSearchState extends AutoPilotState {
 //				autoPilot.goForward(CORRECTION_IMPULSE);
 				countMoves++;
 			}
-			else if (lastKnownPosition.equals(LastKnownCircleLinePosition.LEFT_RECTANGLE_BOTTOM_HLAF)) {
-				autoPilot.goLeft(CORRECTION_IMPULSE);
-				autoPilot.goBack(CORRECTION_IMPULSE);
+			else if (lastKnownPosition.equals(LastKnownCircleLinePosition.LEFT_RECTANGLE_BOTTOM_HLAF)) {			
+				if(countMoves%2==0){
+					autoPilot.goLeft(CORRECTION_IMPULSE);
+				} else {
+					autoPilot.goBack(CORRECTION_IMPULSE);
+				}
 //				Thread.sleep(200);
 //				autoPilot.goLeft(CORRECTION_IMPULSE);
 //				autoPilot.goBack(CORRECTION_IMPULSE);
@@ -58,8 +64,12 @@ public class CircleSearchState extends AutoPilotState {
 				
 			}
 			else if (lastKnownPosition.equals(LastKnownCircleLinePosition.RIGHT_RECTANGLE_UPPER_HLAF)) {
-				autoPilot.goRight(CORRECTION_IMPULSE);
-				autoPilot.goForward(CORRECTION_IMPULSE);
+				if(countMoves%2==0){
+					autoPilot.goRight(CORRECTION_IMPULSE);
+				} else {
+					autoPilot.goForward(CORRECTION_IMPULSE);
+				}
+				countMoves++;
 //				Thread.sleep(200);
 //				autoPilot.goRight(CORRECTION_IMPULSE);
 //				autoPilot.goForward(CORRECTION_IMPULSE);
@@ -68,8 +78,12 @@ public class CircleSearchState extends AutoPilotState {
 //				autoPilot.goForward(CORRECTION_IMPULSE);
 			}
 			else if (lastKnownPosition.equals(LastKnownCircleLinePosition.RIGHT_RECTANGLE_BOTTOM_HLAF)) {
-				autoPilot.goRight(CORRECTION_IMPULSE);
-				autoPilot.goBack(CORRECTION_IMPULSE);
+				if(countMoves%2==0){
+					autoPilot.goRight(CORRECTION_IMPULSE);
+				} else {
+					autoPilot.goBack(CORRECTION_IMPULSE);
+				}
+				countMoves++;
 //				Thread.sleep(200);
 //				autoPilot.goRight(CORRECTION_IMPULSE);
 //				autoPilot.goBack(CORRECTION_IMPULSE);
