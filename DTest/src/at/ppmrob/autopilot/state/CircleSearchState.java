@@ -97,11 +97,6 @@ public class CircleSearchState extends AutoPilotState {
 			e.printStackTrace();
 		} 
 
-		countMoves++;
-
-
-
-
 	}
 
 }
