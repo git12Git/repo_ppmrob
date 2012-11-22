@@ -10,7 +10,8 @@ import at.ppmrob.featuredetection.MyCircle;
 
 public class CircleInformation {
 
-	private static final Long LAST_CIRCLE_FOUND_TIMEOUT = 10000l;
+	private static final Long LAST_CIRCLE_LOST_TIMEOUT = 15000l;
+	private static final long DRONE_OUTSIDE_CIRCLE_TIMEOUT = 500l;
 
 	private long circleFoundTime;
 	private long circleFoundTimeDifference;
@@ -31,6 +32,7 @@ public class CircleInformation {
 	private Rectangle2D.Double redZoneLeftSideRectangle = new Rectangle2D.Double(1, 1, heightDroneCamera*0.33f, widthDroneCamera-1);
 
 	public Rectangle2D.Double getRedZoneLeftSideRectangle() {
+		
 		return redZoneLeftSideRectangle;
 	}
 
@@ -164,11 +166,15 @@ public class CircleInformation {
 	}
 
 	public boolean isDroneLost() {
-		return (getCircleFoundTimeDifference() >= LAST_CIRCLE_FOUND_TIMEOUT);
+		return (getCircleFoundTimeDifference() >= LAST_CIRCLE_LOST_TIMEOUT);
+	}
+	
+	public boolean droneOutsideTimeoutReached() {
+		return (getCircleFoundTimeDifference() >= DRONE_OUTSIDE_CIRCLE_TIMEOUT);
 	}
 
 	public boolean isDroneOutsideRectangles() {
-		return !(isDroneInGreenRectangle() || isDroneInLeftRedZoneRectangle() || isDroneInRightRedZoneRectangle());
+		return !(!droneOutsideTimeoutReached() || isDroneInGreenRectangle() || isDroneInLeftRedZoneRectangle() || isDroneInRightRedZoneRectangle());
 	}
 
 	public boolean isDroneInGreenRectangle() {

@@ -7,8 +7,8 @@ import at.ppmrob.examples.main.AppWindows;
 
 public class TakeOffState extends AutoPilotState {
 
-	private static final float ASCEND_STEP_SIZE = 0.1f;
-	private static final double OPERATING_HEIGHT = 1.0;
+	private static final float ASCEND_STEP_SIZE = 0.25f;
+	private static final double OPERATING_HEIGHT = 0.7;
 	private static final int CHECK_CIRCLE_INTERVAL = 500;
 	private boolean circlePositionCheckScheduled = false;
 

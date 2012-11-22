@@ -38,7 +38,7 @@ public class AppWindows implements IAutoPilotDataInformationListener {
 	private AutoPilot autoPilot;
 	private Thread autoPilotStarter;
 	private ARDrone arDrone;
-	private final int CONNECT_TIMEOUT = 2000;
+	private final int CONNECT_TIMEOUT = 8000;
 	private VideoPanelCustom videoPanelDrone;
 	private NavData navDataFromDrone = new NavData();
 	public static final Integer AUTOPILOT_TASK_FREQUENCY = 1000;
@@ -47,6 +47,7 @@ public class AppWindows implements IAutoPilotDataInformationListener {
 	private static JLabel DEBUG_jLabel_State;
 	
 	private static JLabel DEBUG_jLabelCmdToDrone;
+	private static JLabel lblTurn;
 	/**
 	 * Launch the application.
 	 */
@@ -101,6 +102,9 @@ public class AppWindows implements IAutoPilotDataInformationListener {
 		DEBUG_jLabelCmdToDrone = new JLabel("Sending Cmd To Drone");
 		DEBUG_jLabelCmdToDrone.setFont(new Font("Tahoma", Font.BOLD, 20));
 		
+		lblTurn = new JLabel("turn");
+		lblTurn.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
@@ -114,8 +118,10 @@ public class AppWindows implements IAutoPilotDataInformationListener {
 						.addGroup(gl_panel.createSequentialGroup()
 							.addComponent(jLabel1)
 							.addGap(6)
-							.addComponent(DEBUG_jLabel_State)))
-					.addGap(483))
+							.addComponent(DEBUG_jLabel_State)
+							.addGap(270)
+							.addComponent(lblTurn)))
+					.addContainerGap())
 		);
 		gl_panel.setVerticalGroup(
 			gl_panel.createParallelGroup(Alignment.TRAILING)
@@ -123,7 +129,8 @@ public class AppWindows implements IAutoPilotDataInformationListener {
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(jLabel1)
-						.addComponent(DEBUG_jLabel_State))
+						.addComponent(DEBUG_jLabel_State)
+						.addComponent(lblTurn))
 					.addGap(11)
 					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(jLabel2)
@@ -391,7 +398,7 @@ public class AppWindows implements IAutoPilotDataInformationListener {
 	
 	public void initDrone(){
 		try {
-		this.arDrone = new VideoDrone();//ARDrone();
+		this.arDrone = new ARDrone();
 		this.arDrone.connect();
 		this.arDrone.clearEmergencySignal();
         // Wait until drone is ready
@@ -454,6 +461,11 @@ public class AppWindows implements IAutoPilotDataInformationListener {
 	public static void setDEBUGCurrentCommandToDroneText(String text)
 	{
 		DEBUG_jLabelCmdToDrone.setText(text);
+
+	}
+	public static void setDEBUGTurnValue(String text)
+	{
+		lblTurn.setText(text);
 
 	}
 }

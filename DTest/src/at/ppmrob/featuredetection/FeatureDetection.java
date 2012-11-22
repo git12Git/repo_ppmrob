@@ -178,7 +178,10 @@ public class FeatureDetection {
 	    	for(IFeatureDetectionListener ifdl:listeners){
 	    		ifdl.foundLines(detectedLines, avgLine);
 	    	}
-	}
+	    }
+	    else {
+	    	avgLine = new MyLine(new CvPoint().put(0,0), new CvPoint().put(0,0));
+	    }
 	    //storage2.release();
 	 return detectedLines;
 	}
@@ -222,6 +225,9 @@ public class FeatureDetection {
 //		    	cvLine(img, detectedlines.get(i).point1, 
 //		        		detectedlines.get(i).point2, CvScalar.RED, 1, CV_AA, 0);
 //		    }
+		if (img == null) {
+			return null;
+		}
 		for(MyLine l:detectedlines)
 	    {
 	    	cvLine(img, l.point1, l.point2, CvScalar.RED, 1, CV_AA, 0);

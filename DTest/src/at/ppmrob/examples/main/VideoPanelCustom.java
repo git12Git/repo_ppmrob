@@ -114,6 +114,7 @@ public class VideoPanelCustom extends javax.swing.JPanel implements DroneVideoLi
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         int width = getWidth();
         int height = getHeight();
+        if(g2d!=null)
         drawDroneImage(g2d, width, height);
     }
 
